@@ -30,10 +30,11 @@ axios.interceptors.request.use(function (config) {
   let token = localStorage.getItem("Token")
   if (token) {
       config.headers.Token = token;    //将token放到请求头发送给服务器
-      return config;
+      
       //这里经常搭配token使用，将token值配置到tokenkey中，将tokenkey放在请求头中
       // config.headers['accessToken'] = Token;
   }
+  return config;
 }, function (error) {
   localStorage.setItem("Token","");
   console.log(error)
