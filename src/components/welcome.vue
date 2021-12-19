@@ -1,27 +1,20 @@
 <template>
-  <div id="app">
-    <!--
-    <el-button v-if="this.$store.state.isAuth == 0" @click="toLogin">
-      Login
-    </el-button>
-    <el-button v-else @click="toUserInfo">UserInfo</el-button>
-    <el-button @click="toEditor">
-      Editor
-    </el-button>
-    <el-button @click="toNoteList">
-      Notes
-    </el-button>
-    <el-button @click="toComment">
-      Comment
-    </el-button>
-    -->
-    <router-view></router-view>
+  <div>
+    <div>简陋的欢迎界面</div>
+    <div>CSS布局待完善，记得把这两个div删掉</div>
+    <img src="~@/assets/logo.png" />
+    <div>
+      <el-button v-if="this.$store.state.isAuth == 0" @click="toLogin">Login</el-button>
+      <el-button v-else @click="toUserInfo">UserInfo</el-button>
+      <el-button @click="toEditor">Editor</el-button>
+      <el-button @click="toNoteList">Notes</el-button><el-button @click="toComment">Comment</el-button>
+    </div>
   </div>
 </template>
 
 <script>
 export default {
-  name: 'App',
+  // name: 'App',
   components: {
   },
   data() {
@@ -29,7 +22,7 @@ export default {
     }
   },
   methods:{
-    /*toLogin() {
+    toLogin() {
       //this.$router.push("/xx")
       //传递的参数用{{ $route.query.xxx }}获取
       this.$router.push({path: '/login'})
@@ -51,8 +44,11 @@ export default {
     },
     toComment() {
       this.$router.push({path:'/comments'})
-    }*/
-
+    }
   }
 }
 </script>
+
+<style>
+
+</style>
