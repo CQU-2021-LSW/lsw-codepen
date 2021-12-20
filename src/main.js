@@ -7,6 +7,7 @@ import router from './router/router.js'
 import axios from 'axios'
 import baseURL from './configuration/BaseURL.js'
 import VueX from 'vuex'
+import store from './store/store.js'
 // 序列化使用
 // import qs from 'qs'
 import { codemirror } from 'vue-codemirror'
@@ -30,30 +31,15 @@ axios.interceptors.request.use(function (config) {
   let token = localStorage.getItem("Token")
   if (token) {
       config.headers.Token = token;    //将token放到请求头发送给服务器
-      return config;
+      
       //这里经常搭配token使用，将token值配置到tokenkey中，将tokenkey放在请求头中
       // config.headers['accessToken'] = Token;
   }
+  return config;
 }, function (error) {
   localStorage.setItem("Token","");
   console.log(error)
 });
-
-const store = new VueX.Store({
-  state: {
-    isAuth: 0,
-    userId: null,
-    noteId: null
-  },
-  mutations: {
-    auth (state) {
-      state.isAuth = 1
-    },
-    unAuth(state) {
-      state.isAuth = 0
-    }
-  }
-})
 
 // 解决 NavigationDuplicated: Avoided redundant navigation to current location 冗余导航
 const originalPush = VueRouter.prototype.push
