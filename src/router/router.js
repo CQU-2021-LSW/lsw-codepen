@@ -19,7 +19,7 @@ import welcome from '../components/welcome.vue'
 const routes = [
     //单个路由均为对象类型，path代表的是路径，component代表组件
     {path:'/login',component:login},
-    {path:'/editor/:noteId',name:'editorWithParams',component:aceEditor},
+    {path:'/editor/:noteName',name:'editorWithParams',component:aceEditor},
     {path:'/editor',name:'editorWithoutParams',component:aceEditor},
     {path:'',redirect:"/welcome"},
     {path:'/register',component:register},

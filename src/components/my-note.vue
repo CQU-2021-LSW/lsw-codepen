@@ -11,7 +11,8 @@ export default {
   props: ["idx", "note"],
   methods: {
     edit(note) {
-      this.$router.push({ path: "/editor/" + note.noteId });
+      this.$store.state.noteId = note.noteId;
+      this.$router.push({ path: "/editor/" + note.noteName });
       console.log(note);
     },
   },

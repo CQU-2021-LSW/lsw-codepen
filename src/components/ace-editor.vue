@@ -78,7 +78,7 @@
     <el-dialog :visible.sync="isShow">
       <el-input v-model="noteName"></el-input>
       <el-button @click="submit">确定</el-button>
-      <el-button @click="!isShow">取消</el-button>
+      <el-button @click="isShow = false">取消</el-button>
     </el-dialog>
   </div>
 </template>
@@ -341,8 +341,9 @@ export default {
       document.getElementById("result").setAttribute("srcdoc", code);
     },
     newCode() {
-      // this.$store.state.noteId = null;
-      this.noteId = null;
+      this.$store.state.noteId = null;
+      this.noteId = this.$store.state.noteId;
+      // this.noteId = null;
       this.$router.push({ name: "editorWithoutParams" });
     },
     downloadCode() {
@@ -544,6 +545,47 @@ export default {
       }
       // }
     },
+    getNote() {
+      // 在外部vue的window上添加postMessage的监听，并且绑定处理函数handleMessage
+      window.addEventListener("message", this.handleMessage);
+      this.iframeWin = this.$refs.result.contentWindow;
+      // console.log(this.$route.params);
+      console.log(this.$store.state.userId);
+      console.log(115422);
+      // if (this.$store.state.noteId != null && this.$store.state.userId != null) {
+      if (this.noteId != null && this.$store.state.userId != null) {
+        // this.noteId = this.$route.params.noteId;
+        console.log(this.noteId);
+        this.$http
+          .get("notes/getNote", {
+            params: {
+              noteId: this.noteId,
+            },
+          })
+          .then(({ data }) => {
+            console.log(1111);
+            console.log(data);
+            this.noteName = data.data.noteName;
+            this.setEditorValue(
+              "myHTMLEditor",
+              data.data.htmlCode == null ? "" : data.data.htmlCode
+            );
+            this.setEditorValue(
+              "myJSEditor",
+              data.data.jsCode == null ? "" : data.data.jsCode
+            );
+            this.setEditorValue(
+              "myCSSEditor",
+              data.data.cssCode == null ? "" : data.data.cssCode
+            );
+          });
+      } else {
+        this.noteName = "UNTITLED";
+        this.setEditorValue("myHTMLEditor", "");
+        this.setEditorValue("myJSEditor", "");
+        this.setEditorValue("myCSSEditor", "");
+      }
+    },
 
     function() {
       // var old = console.log;
@@ -560,47 +602,16 @@ export default {
       };
     },
   },
+  watch: {
+    $route: "getNote",
+  },
   created() {
     // 拿到三方库的信息
     this.getLibs();
+    this.noteId = this.$store.state.noteId;
   },
   mounted() {
-    // 在外部vue的window上添加postMessage的监听，并且绑定处理函数handleMessage
-    window.addEventListener("message", this.handleMessage);
-    this.iframeWin = this.$refs.result.contentWindow;
-    console.log(this.$route.params);
-    console.log(this.$store.state.userId);
-    // if (this.$store.state.noteId != null && this.$store.state.userId != null) {
-    if (
-      this.$route.params.noteId != "undefined" &&
-      this.$store.state.userId != null
-    ) {
-      this.noteId = this.$route.params.noteId;
-      console.log(this.noteId);
-      this.$http
-        .get("notes/getNote", {
-          params: {
-            noteId: this.noteId,
-          },
-        })
-        .then(({ data }) => {
-          console.log(1111);
-          console.log(data);
-          this.noteName = data.data.noteName;
-          this.setEditorValue(
-            "myHTMLEditor",
-            data.data.htmlCode == null ? "" : data.data.htmlCode
-          );
-          this.setEditorValue(
-            "myJSEditor",
-            data.data.jsCode == null ? "" : data.data.jsCode
-          );
-          this.setEditorValue(
-            "myCSSEditor",
-            data.data.cssCode == null ? "" : data.data.cssCode
-          );
-        });
-    }
+    this.getNote();
   },
   updated() {},
   handleMessage(event) {
