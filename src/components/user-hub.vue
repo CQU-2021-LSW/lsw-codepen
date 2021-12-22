@@ -2,6 +2,7 @@
   <div class="content">
     <div class="side">
       <button @click="addfile">编辑页面</button>
+      <button @click="loginOut">登出</button>
       <div class="info_box">
         <div class="head_box"></div>
         <div class="username">aisucbasiuc</div>
@@ -60,7 +61,11 @@ export default {
         });
     },
     addfile() {
-      this.$router.push({ path: "/editor" });
+      this.$router.push({ name: "editorWithoutParams" });
+    },
+    loginOut() {
+      this.$cookies.remove("userId");
+      this.$router.push({ path: "/welcome" });
     },
   },
   components: { userInfo, myNote },

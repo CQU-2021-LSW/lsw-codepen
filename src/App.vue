@@ -51,6 +51,11 @@ export default {
       this.$router.push({path:'/comments'})
     }*/
   },
+  created() {
+    if (this.$cookies.isKey("userId")) {
+      this.$store.state.userId = this.$cookies.get("userId");
+    }
+  },
 };
 </script>
 

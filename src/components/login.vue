@@ -75,6 +75,9 @@ export default {
               console.log(data);
               // 这里用了两种方式，localstore 和 vueX 分别 Token 和 userId
               localStorage.setItem("Token", data.token);
+              this.$cookies.set("userId", data.userId);
+              // console.log(this.$cookies.get("userId"));
+              // console.log(1111);
               this.$store.state.userId = data.userId;
               this.$store.commit("auth");
               // console.log(this.$store.state.isAuth)

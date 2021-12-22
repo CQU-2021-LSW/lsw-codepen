@@ -8,6 +8,7 @@ import axios from 'axios'
 import baseURL from './configuration/BaseURL.js'
 import VueX from 'vuex'
 import store from './store/store.js'
+import  VueCookies  from 'vue-cookies';
 // 序列化使用
 // import qs from 'qs'
 import { codemirror } from 'vue-codemirror'
@@ -25,6 +26,7 @@ axios.defaults.headers.post['Content-Type'] = 'application/json';
 //   return qs.stringify(data,{arrayFormat: 'brackets'})
 // }
 Vue.use(VueX)
+Vue.use(VueCookies)
 
 axios.interceptors.request.use(function (config) {
   // Do something before request is sent
@@ -46,6 +48,8 @@ const originalPush = VueRouter.prototype.push
   VueRouter.prototype.push = function push(location) {
   return originalPush.call(this, location).catch(err => err)
 }
+// this.$cookies.config('2d')
+VueCookies.config('2d')
 
 new Vue({
   render: h => h(App),
