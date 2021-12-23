@@ -1,8 +1,8 @@
 <template>
   <div class="content">
     <div class="side">
-      <button @click="addfile">编辑页面</button>
-      <button @click="loginOut">登出</button>
+      <button @click="addfile">新建项目</button>
+      <!-- <button @click="loginOut">登出</button> -->
       <div class="info_box">
         <div class="head_box"></div>
         <div class="username">aisucbasiuc</div>
@@ -63,10 +63,10 @@ export default {
     addfile() {
       this.$router.push({ name: "editorWithoutParams" });
     },
-    loginOut() {
-      this.$cookies.remove("userId");
-      this.$router.push({ path: "/welcome" });
-    },
+    // loginOut() {
+    //   this.$cookies.remove("userId");
+    //   this.$router.push({ path: "/welcome" });
+    // },
   },
   components: { userInfo, myNote },
 };
@@ -116,6 +116,7 @@ export default {
   /* justify-content: start; */
   flex-wrap: wrap;
   padding: 20px;
+  align-content: flex-start;
 }
 .note_box {
   width: 300px;

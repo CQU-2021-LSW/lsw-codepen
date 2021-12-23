@@ -42,7 +42,7 @@
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="update">提交</el-button>
-        <el-button @click="cancel" class="reset_btn">重置</el-button>
+        <el-button @click="cancel" class="reset_btn">取消</el-button>
       </el-form-item>
     </el-form>
     <!-- </el-dialog> -->

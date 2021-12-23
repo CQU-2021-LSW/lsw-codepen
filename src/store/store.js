@@ -7,6 +7,7 @@ const store = new Vuex.Store({
     isAuth: 0,
     userId: null,
     noteId: null,
+    ifEditor: false,
   },
   mutations: {
     auth (state) {

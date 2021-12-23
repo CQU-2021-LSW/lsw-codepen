@@ -18,16 +18,16 @@ import welcome from '../components/welcome.vue'
 //定义routes路由的集合，数组类型
 const routes = [
     //单个路由均为对象类型，path代表的是路径，component代表组件
-    {path:'/login',component:login},
+    {path:'/login',name:'login',component:login},
     {path:'/editor/:noteName',name:'editorWithParams',component:aceEditor},
     {path:'/editor',name:'editorWithoutParams',component:aceEditor},
-    {path:'',redirect:"/welcome"},
-    {path:'/register',component:register},
-    {path:'/findBackPwd',component:findBackPwd},
-    {path:'/user-hub',component:userHub},
-    {path:'/noteList',component:noteList},
-    {path:'/comments',component:comment},
-    {path:'/welcome',component:welcome}
+    {path:'',name:'home',redirect:"/welcome"},
+    {path:'/register',name:'register',component:register},
+    {path:'/findBackPwd',name:'findBackPwd',component:findBackPwd},
+    {path:'/user-hub',name:'uerHub',component:userHub},
+    {path:'/noteList',name:'noteList',component:noteList},
+    {path:'/comments',name:'comments',component:comment},
+    {path:'/welcome',name:'welcome',component:welcome}
 ]
 
 //实例化VueRouter并将routes添加进去
