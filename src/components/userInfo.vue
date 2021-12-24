@@ -132,11 +132,7 @@ export default {
         },
         logout(){
             this.$store.commit('unAuth');
-            this.$store.state.userId = '';
-            localStorage.setItem("Token","NONE");
-            console.log(localStorage.getItem('Token'));
-            console.log(this.$store.state.isAuth);
-            this.$router.push({path: '/editor'})
+            this.$router.push({path: '/welcome'})
         },
         doChange(){
             this.isChanging = true;
