@@ -10,11 +10,23 @@ const store = new Vuex.Store({
     ifEditor: false,
   },
   mutations: {
-    auth (state) {
+    auth (state, uid, token) {
       state.isAuth = 1
+      console.log('isauth状态已变化')
+      localStorage.setItem('Token', token)
+      state.userId = uid
+      
+      // this.$cookies.set('userId',uid)
+      console.log('已完成登录')
+      // console.log(this.$store.state.userId)
     },
     unAuth(state) {
       state.isAuth = 0
+      state.userId = '';
+      localStorage.setItem("Token","NONE");
+      console.log(localStorage.getItem('Token'));
+      // console.log(this.$store.state.isAuth);
+      console.log('isauth状态已变化')
     }
   }
 })

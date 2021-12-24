@@ -1,18 +1,6 @@
 <template>
   <div id="app">
-    <!-- <el-menu v-if="!ifEditor" class="header" mode="horizontal" router>
-      <el-menu-item index="/welcome"
-        ><img src="~@/assets/pic.jpg" />&emsp;codepen</el-menu-item
-      >
-      <el-menu-item index="/comments">评论区</el-menu-item>
-      <el-menu-item v-if="ifLogin" id="r0" index="/login"
-        ><img src="~@/assets/pic.jpg" />&emsp;请登录</el-menu-item
-      >
-      <el-menu-item v-else id="r1" index="/user-hub"
-        ><img src="~@/assets/pic.jpg" />&emsp;已经登录啦</el-menu-item
-      >
-    </el-menu> -->
-    <Header></Header>
+    <Header v-if="!this.$store.state.ifEditor"></Header>
     <router-view></router-view>
   </div>
 </template>
@@ -44,11 +32,7 @@ export default {
   beforeUpdate() {
     this.loginState();
   },
-  computed: {
-    // ifLogin() {
-    //   return this.$store.state.isAuth === 0;
-    // },
-  },
+  computed: {},
   watch: {
     $route: function (r) {
       if (r.path.indexOf("editor") != -1) {
@@ -62,12 +46,16 @@ export default {
 </script>
 
 <style >
+html,
+body,
 #app {
   /*display:flex;
   flex-direction:column;*/
+  display: flex;
   height: 100%;
+  flex-direction: column;
 }
-.header {
+/* .header {
   display: flex;
   flex-direction: row;
   justify-content: flex-start;
@@ -82,5 +70,5 @@ img {
   height: auto;
   max-width: 90%;
   max-height: 90%;
-}
+} */
 </style>

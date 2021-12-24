@@ -22,13 +22,10 @@
 <script>
 export default {
   data() {
-    return {
-      // ifLogin: this.$store.state.isAuth
-    };
+    return {};
   },
   methods: {
     logout() {
-      // console.log("wuhu!")
       this.$cookies.remove("userId");
       this.$store.commit("unAuth");
     },
@@ -37,9 +34,6 @@ export default {
     ifLogin() {
       return this.$store.state.isAuth === 0;
     },
-    // ifEditor() {
-    //   return this.$store.state.ifEditor;
-    // },
   },
 };
 </script>

@@ -1,32 +1,33 @@
 <template>
-  <el-form
-    :model="ruleForm"
-    status-icon
-    :rules="rules"
-    ref="ruleForm"
-    label-width="100px"
-    class="demo-ruleForm"
-  >
-    <el-form-item label="用户名" prop="userName">
-      <el-input v-model="ruleForm.userName"></el-input>
-    </el-form-item>
-    <el-form-item label="密码" prop="password">
-      <el-input
-        type="password"
-        v-model="ruleForm.password"
-        autocomplete="off"
-      ></el-input>
-    </el-form-item>
-    <el-form-item>
-      <el-button type="primary" @click="login('ruleForm')">提交</el-button>
-      <el-button @click="resetForm('ruleForm')">重置</el-button>
-      <el-button type="primary" @click="toRegister()">注册</el-button>
-      <el-button type="danger" @click="toFindbackPassword()"
-        >找回密码</el-button
-      >
-    </el-form-item>
-  </el-form>
+  <div id="a">
+    <!-- <img id="bg" src="../assets/bg.jpg"/> -->
+    <div id="b">
+      <el-form :model="ruleForm" status-icon :rules="rules" ref="ruleForm">
+        <el-form-item label="用户名" prop="userName">
+          <el-input v-model="ruleForm.userName"></el-input>
+        </el-form-item>
+        <el-form-item label="密码" prop="password">
+          <el-input
+            type="password"
+            v-model="ruleForm.password"
+            autocomplete="off"
+          ></el-input>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" @click="login('ruleForm')" plain
+            >提交</el-button
+          >
+          <el-button @click="resetForm('ruleForm')" plain>重置</el-button>
+          <el-button type="primary" @click="toRegister()" plain>注册</el-button>
+          <el-button type="danger" @click="toFindbackPassword()" plain
+            >找回密码</el-button
+          >
+        </el-form-item>
+      </el-form>
+    </div>
+  </div>
 </template>
+
 <script>
 export default {
   data() {
@@ -60,7 +61,6 @@ export default {
   methods: {
     login(formName) {
       this.$refs[formName].validate((valid) => {
-        // 验证成功发送请求
         if (valid) {
           this.$http({
             method: "post",
@@ -73,16 +73,15 @@ export default {
             .then(({ data }) => {
               // 保存Token和登录信息
               console.log(data);
-              // 这里用了两种方式，localstore 和 vueX 分别 Token 和 userId
-              localStorage.setItem("Token", data.token);
-              this.$cookies.set("userId", data.userId);
-              // console.log(this.$cookies.get("userId"));
-              // console.log(1111);
-              this.$store.state.userId = data.userId;
-              this.$store.commit("auth");
-              // console.log(this.$store.state.isAuth)
-              // console.log(this.$store.state.userId)
-              this.$router.push({ path: "/user-hub" });
+              if (data.state) {
+                console.log("认证成功");
+                this.$store.commit("auth", data.userId, data.token);
+                this.$cookies.set("userId", data.userId);
+                console.log("走到这里");
+                this.$router.push({ path: "/user-hub" });
+              } else {
+                console.log("失败");
+              }
             })
             .catch(({ error }) => {
               console.log("err");
@@ -106,3 +105,38 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+#a {
+  height: 100%;
+  background-image: url("../assets/bg.jpg");
+  background-size: 100% 100%;
+}
+#b {
+  position: absolute;
+  background-color: rgba(255, 192, 203, 0.5);
+  border-radius: 10px;
+  height: 300px;
+  width: 400px;
+  padding: 20px 20px 0px 20px;
+  top: 50%;
+  left: 50%;
+  margin: -150px -200px;
+}
+.el-button {
+  margin: 10px 10px;
+}
+.el-form-item__label {
+  font-size: 24px;
+}
+/* #bg{
+  position:absolute;
+  left:0px;
+  top:0px;
+  z-index:-1;
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: 100%;
+} */
+</style>
