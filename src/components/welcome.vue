@@ -1,7 +1,7 @@
 <template>
   <div>
     <div>简陋的欢迎界面</div>
-    <div>CSS布局待完善，记得把这两个div删掉</div>
+    <div>CSS布局待完善，记得把这两个div</div>
     <img src="~@/assets/logo.png" />
     <div>
       <el-button @click="toEditor">Editor</el-button>
@@ -12,20 +12,17 @@
 <script>
 export default {
   // name: 'App',
-  components: {
-  },
+  components: {},
   data() {
-    return{
-    }
+    return {};
   },
-  methods:{
+  methods: {
     toEditor() {
-      this.$router.push({path: '/editor'})
+      this.$router.push({ path: "/editor" });
     },
-  }
-}
+  },
+};
 </script>
 
 <style>
-
 </style>
