@@ -35,9 +35,10 @@
     </el-tabs>
     <el-button type="primary" @click="showResult()">RUN</el-button>
     <el-button type="danger" @click="submitCode()">SAVE</el-button>
-    <el-button v-if="this.$store.state.noteId != null" @click="newCode()"
+    <!-- <el-button v-if="this.$store.state.noteId != null" @click="newCode()"
       >NEW</el-button
-    >
+    > -->
+    <el-button v-if="this.noteId != null" @click="newCode()">NEW</el-button>
     <a :href="download" ref="downloadLink">
       <el-button @click="downloadCode()"> DOWNLOAD </el-button>
     </a>
@@ -74,6 +75,11 @@
       class="code"
     ></codemirror>
     <iframe id="result" ref="result" height="1080px" width="720px"></iframe>
+    <el-dialog :visible.sync="isShow">
+      <el-input v-model="noteName"></el-input>
+      <el-button @click="submit">确定</el-button>
+      <el-button @click="isShow = false">取消</el-button>
+    </el-dialog>
   </div>
 </template>
 
@@ -87,7 +93,6 @@ require("codemirror/addon/fold/xml-fold.js");
 require("codemirror/addon/fold/indent-fold.js");
 require("codemirror/addon/fold/markdown-fold.js");
 require("codemirror/addon/fold/comment-fold.js");
-
 import editor from "vue2-ace-editor";
 import "brace/ext/language_tools"; //language extension prerequsite...
 import "brace/mode/html";
@@ -133,13 +138,15 @@ import "brace/theme/xcode";
 import "brace/snippets/javascript"; //snippet
 import "brace/snippets/html"; //snippet
 import "brace/snippets/css"; //snippet
-
 export default {
   name: "aceEditor",
   data() {
     return {
       download: "",
+      noteId: null,
       noteName: "UNTITLE",
+      isShow: false,
+      // isConfirm: false,
       libs: [],
       theme: "chrome", // default
       // content:null
@@ -245,7 +252,6 @@ export default {
         "<head>\n" +
         '  <meta charset="UTF-8">\n' +
         "  <title>Editor</title>\n";
-
       // 第三方库有内容
       if (this.selected.length != 0) {
         for (var i = 0; i < this.selected.length; i++) {
@@ -272,14 +278,15 @@ export default {
           ? ""
           : this.getEditorValue("myJSEditor");
       // 将console.log的值保存
-      var consoleLogHelper = `var consoleLogData = [];\n`
-      + `console.log = function (message) {
+      var consoleLogHelper =
+        `var consoleLogData = [];\n` +
+        `console.log = function (message) {
         if (typeof message == 'object') {
           consoleLogData.push(JSON && JSON.stringify ? JSON.stringify(message) : message);
         } else {
           consoleLogData.push(message);
         }
-      } \n`
+      } \n`;
       // 向父组件穿参
       var cmdHelper = `
       window.parent.postMessage({
@@ -287,7 +294,7 @@ export default {
         params: {
           success: true, 
           data: consoleLogData
-        }});`
+        }});`;
       var resultJS = consoleLogHelper + JSContent + cmdHelper;
       // var code = this.getCode();
       var HTMLContent =
@@ -304,7 +311,6 @@ export default {
         "<head>\n" +
         '  <meta charset="UTF-8">\n' +
         "  <title>Editor</title>\n";
-
       // 第三方库有内容
       if (this.selected.length != 0) {
         for (var i = 0; i < this.selected.length; i++) {
@@ -316,23 +322,22 @@ export default {
       code += "\n  </style>\n" + "</head>\n" + "<body>\n";
       code += HTMLContent;
       code += "\n  <script>\n";
-
-    //   todo
-    //   code += "parent.$refs[\"myCm\"].setValue(\"change\")"
-
+      //   todo
+      //   code += "parent.$refs[\"myCm\"].setValue(\"change\")"
       code += resultJS;
       code += "\n";
       // reason : 会把当作结束标签而产生语法错误。
       code += "  </scr" + "ipt>\n";
       code += "</body>\n";
       code += "</html>";
-
-
       console.log(code);
       document.getElementById("result").setAttribute("srcdoc", code);
     },
     newCode() {
       this.$store.state.noteId = null;
+      this.noteId = this.$store.state.noteId;
+      // this.noteId = null;
+      this.$router.push({ name: "editorWithoutParams" });
     },
     downloadCode() {
       var code = this.getCode();
@@ -351,90 +356,229 @@ export default {
         return;
       }
       if (this.$store.state.isAuth == 1) {
-        // 不是编辑状态 保存新数据
-        if (this.$store.state.noteId == null) {
-          this.$http({
-            method: "post",
-            url: "/notes/saveCode",
-            data: {
-              noteName: this.noteName,
-              userId: this.$store.state.userId,
-              htmlCode:
-                this.getEditorValue("myHTMLEditor") === undefined
-                  ? ""
-                  : this.getEditorValue("myHTMLEditor"),
-              jsCode:
-                this.getEditorValue("myJSEditor") === undefined
-                  ? ""
-                  : this.getEditorValue("myJSEditor"),
-              cssCode:
-                this.getEditorValue("myCSSEditor") === undefined
-                  ? ""
-                  : this.getEditorValue("myCSSEditor"),
-            },
-          })
-            .then(({ data }) => {
-              if (data && data.code === 0) {
-                console.log(data);
-                this.$message({
-                  message: "保存成功┗|｀O′|┛ 嗷~~",
-                  type: "success",
-                });
-                this.$store.state.noteId = data.data.noteId;
-                console.log(data);
-                console.log(this.$store.state.noteId);
-              } else {
-                this.$message({
-                  message: "保存失败(∪.∪ )...zzz稍后再试或者联系作者",
-                  type: "warning",
-                });
-              }
-            })
-            .catch(({ error }) => {
-              console.log(error);
-            });
-        } else {
-          this.$http({
-            method: "post",
-            url: "/notes/updateCode",
-            data: {
-              noteId: this.$store.state.noteId,
-              noteName: this.noteName,
-              userId: this.$store.state.userId,
-              htmlCode:
-                this.getEditorValue("myHTMLEditor") === undefined
-                  ? ""
-                  : this.getEditorValue("myHTMLEditor"),
-              jsCode:
-                this.getEditorValue("myJSEditor") === undefined
-                  ? ""
-                  : this.getEditorValue("myJSEditor"),
-              cssCode:
-                this.getEditorValue("myCSSEditor") === undefined
-                  ? ""
-                  : this.getEditorValue("myCSSEditor"),
-            },
-          })
-            .then(({ data }) => {
-              if (data && data.code === 0) {
-                this.$message({
-                  message: "保存成功┗|｀O′|┛ 嗷~~",
-                  type: "success",
-                });
-              } else {
-                this.$message({
-                  message: "保存失败(∪.∪ )...zzz稍后再试或者联系作者",
-                  type: "warning",
-                });
-              }
-            })
-            .catch(({ error }) => {
-              console.log(error);
-            });
-        }
+        this.isShow = true;
+        // if (this.isConfirm) {
+        //   console.log(5454545);
+        //   // 不是编辑状态 保存新数据
+        //   // if (this.$store.state.noteId == null) {
+        //   if (this.noteId == null) {
+        //     console.log(this.$store.state.userId);
+        //     this.$http({
+        //       method: "post",
+        //       url: "/notes/saveCode",
+        //       data: {
+        //         noteName: this.noteName,
+        //         userId: this.$store.state.userId,
+        //         htmlCode:
+        //           this.getEditorValue("myHTMLEditor") === undefined
+        //             ? ""
+        //             : this.getEditorValue("myHTMLEditor"),
+        //         jsCode:
+        //           this.getEditorValue("myJSEditor") === undefined
+        //             ? ""
+        //             : this.getEditorValue("myJSEditor"),
+        //         cssCode:
+        //           this.getEditorValue("myCSSEditor") === undefined
+        //             ? ""
+        //             : this.getEditorValue("myCSSEditor"),
+        //       },
+        //     })
+        //       .then(({ data }) => {
+        //         if (data && data.code === 0) {
+        //           console.log(data);
+        //           this.$message({
+        //             message: "保存成功┗|｀O′|┛ 嗷~~",
+        //             type: "success",
+        //           });
+        //           this.$store.state.noteId = data.data.noteId;
+        //           this.noteId = data.data.noteId;
+        //           console.log(data);
+        //           console.log(this.$store.state.noteId);
+        //         } else {
+        //           this.$message({
+        //             message: "保存失败(∪.∪ )...zzz稍后再试或者联系作者",
+        //             type: "warning",
+        //           });
+        //         }
+        //       })
+        //       .catch(({ error }) => {
+        //         console.log(error);
+        //       });
+        //   } else {
+        //     this.$http({
+        //       method: "post",
+        //       url: "/notes/updateCode",
+        //       data: {
+        //         // noteId: this.$store.state.noteId,
+        //         noteId: this.noteId,
+        //         noteName: this.noteName,
+        //         userId: this.$store.state.userId,
+        //         htmlCode:
+        //           this.getEditorValue("myHTMLEditor") === undefined
+        //             ? ""
+        //             : this.getEditorValue("myHTMLEditor"),
+        //         jsCode:
+        //           this.getEditorValue("myJSEditor") === undefined
+        //             ? ""
+        //             : this.getEditorValue("myJSEditor"),
+        //         cssCode:
+        //           this.getEditorValue("myCSSEditor") === undefined
+        //             ? ""
+        //             : this.getEditorValue("myCSSEditor"),
+        //       },
+        //     })
+        //       .then(({ data }) => {
+        //         if (data && data.code === 0) {
+        //           this.$message({
+        //             message: "保存成功┗|｀O′|┛ 嗷~~",
+        //             type: "success",
+        //           });
+        //         } else {
+        //           this.$message({
+        //             message: "保存失败(∪.∪ )...zzz稍后再试或者联系作者",
+        //             type: "warning",
+        //           });
+        //         }
+        //       })
+        //       .catch(({ error }) => {
+        //         console.log(error);
+        //       });
+        //   }
+        // }
       }
     },
-
+    submit() {
+      this.isShow = !this.isShow;
+      // if (this.isConfirm) {
+      //     console.log(5454545);
+      // 不是编辑状态 保存新数据
+      // if (this.$store.state.noteId == null) {
+      if (this.noteId == null) {
+        console.log(this.$store.state.userId);
+        this.$http({
+          method: "post",
+          url: "/notes/saveCode",
+          data: {
+            noteName: this.noteName,
+            userId: this.$store.state.userId,
+            htmlCode:
+              this.getEditorValue("myHTMLEditor") === undefined
+                ? ""
+                : this.getEditorValue("myHTMLEditor"),
+            jsCode:
+              this.getEditorValue("myJSEditor") === undefined
+                ? ""
+                : this.getEditorValue("myJSEditor"),
+            cssCode:
+              this.getEditorValue("myCSSEditor") === undefined
+                ? ""
+                : this.getEditorValue("myCSSEditor"),
+          },
+        })
+          .then(({ data }) => {
+            if (data && data.code === 0) {
+              console.log(data);
+              this.$message({
+                message: "保存成功┗|｀O′|┛ 嗷~~",
+                type: "success",
+              });
+              this.$store.state.noteId = data.data.noteId;
+              this.noteId = data.data.noteId;
+              console.log(data);
+              console.log(this.$store.state.noteId);
+            } else {
+              this.$message({
+                message: "保存失败(∪.∪ )...zzz稍后再试或者联系作者",
+                type: "warning",
+              });
+            }
+          })
+          .catch(({ error }) => {
+            console.log(error);
+          });
+      } else {
+        this.$http({
+          method: "post",
+          url: "/notes/updateCode",
+          data: {
+            // noteId: this.$store.state.noteId,
+            noteId: this.noteId,
+            noteName: this.noteName,
+            userId: this.$store.state.userId,
+            htmlCode:
+              this.getEditorValue("myHTMLEditor") === undefined
+                ? ""
+                : this.getEditorValue("myHTMLEditor"),
+            jsCode:
+              this.getEditorValue("myJSEditor") === undefined
+                ? ""
+                : this.getEditorValue("myJSEditor"),
+            cssCode:
+              this.getEditorValue("myCSSEditor") === undefined
+                ? ""
+                : this.getEditorValue("myCSSEditor"),
+          },
+        })
+          .then(({ data }) => {
+            if (data && data.code === 0) {
+              this.$message({
+                message: "保存成功┗|｀O′|┛ 嗷~~",
+                type: "success",
+              });
+            } else {
+              this.$message({
+                message: "保存失败(∪.∪ )...zzz稍后再试或者联系作者",
+                type: "warning",
+              });
+            }
+          })
+          .catch(({ error }) => {
+            console.log(error);
+          });
+      }
+      // }
+    },
+    getNote() {
+      // 在外部vue的window上添加postMessage的监听，并且绑定处理函数handleMessage
+      window.addEventListener("message", this.handleMessage);
+      this.iframeWin = this.$refs.result.contentWindow;
+      // console.log(this.$route.params);
+      console.log(this.$store.state.userId);
+      console.log(115422);
+      // if (this.$store.state.noteId != null && this.$store.state.userId != null) {
+      if (this.noteId != null && this.$store.state.userId != null) {
+        // this.noteId = this.$route.params.noteId;
+        console.log(this.noteId);
+        this.$http
+          .get("notes/getNote", {
+            params: {
+              noteId: this.noteId,
+            },
+          })
+          .then(({ data }) => {
+            console.log(1111);
+            console.log(data);
+            this.noteName = data.data.noteName;
+            this.setEditorValue(
+              "myHTMLEditor",
+              data.data.htmlCode == null ? "" : data.data.htmlCode
+            );
+            this.setEditorValue(
+              "myJSEditor",
+              data.data.jsCode == null ? "" : data.data.jsCode
+            );
+            this.setEditorValue(
+              "myCSSEditor",
+              data.data.cssCode == null ? "" : data.data.cssCode
+            );
+          });
+      } else {
+        this.noteName = "UNTITLED";
+        this.setEditorValue("myHTMLEditor", "");
+        this.setEditorValue("myJSEditor", "");
+        this.setEditorValue("myCSSEditor", "");
+      }
+    },
     function() {
       // var old = console.log;
       var logger = document.getElementById("log");
@@ -450,55 +594,33 @@ export default {
       };
     },
   },
+  watch: {
+    $route: "getNote",
+  },
   created() {
     // 拿到三方库的信息
     this.getLibs();
+    this.noteId = this.$store.state.noteId;
   },
   mounted() {
-    // 在外部vue的window上添加postMessage的监听，并且绑定处理函数handleMessage
-    window.addEventListener('message', this.handleMessage)
-    this.iframeWin = this.$refs.result.contentWindow
-
-    if (this.$store.state.noteId != null && this.$store.state.userId != null) {
-      this.$http
-        .get("notes/getNote", {
-          params: {
-            noteId: this.$store.state.noteId,
-          },
-        })
-        .then(({ data }) => {
-          console.log(data);
-          this.noteName = data.data.noteName;
-          this.setEditorValue(
-            "myHTMLEditor",
-            data.data.htmlCode == null ? "" : data.data.htmlCode
-          );
-          this.setEditorValue(
-            "myJSEditor",
-            data.data.jsCode == null ? "" : data.data.jsCode
-          );
-          this.setEditorValue(
-            "myCSSEditor",
-            data.data.cssCode == null ? "" : data.data.cssCode
-          );
-        });
+    this.getNote();
+  },
+  updated() {},
+  handleMessage(event) {
+    // 根据上面制定的结构来解析iframe内部发回来的数据
+    const data = event.data;
+    switch (data.cmd) {
+      case "returnLog":
+        if (data.params.success) {
+          // 调用报名方法
+          console.log("收到Iframe");
+          console.log(data.params.data);
+        } else {
+          console.log("未收到Iframe");
+          console.log(data.params);
+        }
+        break;
     }
   },
-  handleMessage (event) {
-    // 根据上面制定的结构来解析iframe内部发回来的数据
-    const data = event.data
-    switch (data.cmd) {
-      case 'returnLog':
-        if (data.params.success) {
-            // 调用报名方法
-            console.log("收到Iframe")
-            console.log(data.params.data)
-          } else {
-            console.log("未收到Iframe")
-            console.log(data.params)
-          }
-        break
-    }
-  }
 };
 </script>

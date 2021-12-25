@@ -20,7 +20,7 @@ const store = new Vuex.Store({
     },
     unAuth(state) {
       state.isAuth = 0
-      state.userId = '';
+      state.userId = null
       localStorage.setItem("Token","NONE");
       console.log(localStorage.getItem('Token'));
       // console.log(this.$store.state.isAuth);
