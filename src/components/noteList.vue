@@ -72,7 +72,6 @@
       }
     },
     create() {
-
     },
     mounted() {
         this.getNoteList();
@@ -81,5 +80,4 @@
 </script>
 
 <style>
-
 </style>

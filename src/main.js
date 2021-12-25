@@ -8,11 +8,14 @@ import axios from 'axios'
 import baseURL from './configuration/BaseURL.js'
 import VueX from 'vuex'
 import store from './store/store.js'
+import VueCookies from 'vue-cookies'
 // 序列化使用
 // import qs from 'qs'
 import { codemirror } from 'vue-codemirror'
 import 'codemirror/lib/codemirror.css'
 Vue.use(codemirror)
+
+Vue.use(VueCookies)
 
 Vue.prototype.$http = axios
 Vue.config.productionTip = false
@@ -25,6 +28,8 @@ axios.defaults.headers.post['Content-Type'] = 'application/json';
 //   return qs.stringify(data,{arrayFormat: 'brackets'})
 // }
 Vue.use(VueX)
+
+VueCookies.config('2d')
 
 axios.interceptors.request.use(function (config) {
   // Do something before request is sent

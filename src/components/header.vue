@@ -22,7 +22,8 @@ export default {
   },
   methods:{
     logout(){
-      console.log("wuhu!")
+      // console.log("wuhu!")
+      this.$cookies.remove("userId");
       this.$store.commit('unAuth')
     }
   },

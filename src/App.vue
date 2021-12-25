@@ -19,7 +19,15 @@ export default {
     }
   },
   methods:{
-    
+    loginState() {
+      if (this.$cookies.isKey("userId")) {
+        this.$store.state.isAuth = 1;
+        this.$store.state.userId = this.$cookies.get("userId");
+      }
+    },
+  },
+  created() {
+    this.loginState();
   },
   computed:{
   }
