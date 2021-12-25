@@ -1,5 +1,9 @@
 <template>
   <div class="content">
+    <!-- <div>简陋的欢迎界面</div> -->
+    <!-- <div>CSS布局待完善，记得把这两个div</div> -->
+    <!-- <img src="~@/assets/logo.png" /> -->
+    <!-- <cartoon-text></cartoon-text> -->
     <button @click="toEditor">Editor</button>
     <candle></candle>
   </div>
@@ -30,7 +34,7 @@ export default {
 button {
   font-weight: bolder;
   position: absolute;
-  top: 600px;
+  top: 200px;
   right: 100px;
   width: 100px;
   height: 50px;
