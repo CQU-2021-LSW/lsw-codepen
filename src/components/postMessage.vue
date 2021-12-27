@@ -39,7 +39,7 @@ export default {
 
     <h1>Hello there, i'm an iframe</h1>
 
-    <scr>
+    <scr`+ `ipt>
         // 向父vue页面发送信息
         window.parent.postMessage({
             cmd: 'returnHeight',
