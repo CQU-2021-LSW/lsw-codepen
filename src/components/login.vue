@@ -84,7 +84,11 @@ export default {
                 this.$store.commit("auth", args)
                 this.$cookies.set("userId", data.userId)
                 this.$cookies.set("userName", this.ruleForm.userName)
-                this.$router.push({ path: "/user-hub" })
+                if (this.$store.state.isCache){
+                  this.$router.push({ path: "/editor" })
+                } else {
+                  this.$router.push({ path: "/user-hub" })
+                }
               } else {
                 console.log("失败")
               }
