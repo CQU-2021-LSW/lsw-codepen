@@ -6,19 +6,19 @@
 </template>
 
 <script>
-import Header from './components/header.vue'
+import Header from "./components/header.vue";
 
 export default {
-  name: 'App',
+  name: "App",
   components: {
-    Header
+    Header,
   },
   data() {
     return {
       // ifLogin: this.$store.state.isAuth
-    }
+    };
   },
-  methods:{
+  methods: {
     loginState() {
       if (this.$cookies.isKey("userId")) {
         this.$store.state.isAuth = 1;
@@ -29,15 +29,15 @@ export default {
   created() {
     this.loginState();
   },
-  computed:{
-  }
-}
+  computed: {},
+};
 </script>
 
 <style>
-html,body,
-#app{
-  height:100%;
+html,
+body,
+#app {
+  height: 100%;
   display: flex;
   flex-direction: column;
 }
