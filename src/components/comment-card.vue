@@ -11,10 +11,10 @@
       <main>{{ comment.commentText }}</main>
       <footer>
         <span><i class="el-icon-chat-dot-round"></i></span>
-        <span @click="give_a_like">
-          <i :class="[isLike ? 'el-icon-star-on' : 'el-icon-star-off']"></i>
-          &nbsp;{{ comment.likeCount ? comment.likeCount : "" }}
-        </span>
+        <span @click="give_a_like"
+          ><i :class="[isLike ? 'el-icon-star-on' : 'el-icon-star-off']"></i
+          >&nbsp;{{ comment.likeCount ? comment.likeCount : "" }}</span
+        >
       </footer>
     </div>
   </div>
