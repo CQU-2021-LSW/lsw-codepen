@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <Header></Header>
+    <Header v-show="!ifEditor"></Header>
     <router-view></router-view>
   </div>
 </template>
@@ -14,22 +14,25 @@ export default {
     Header,
   },
   data() {
-    return {
-      // ifLogin: this.$store.state.isAuth
-    };
+    return {};
   },
   methods: {
     loginState() {
       if (this.$cookies.isKey("userId")) {
         this.$store.state.isAuth = 1;
         this.$store.state.userId = this.$cookies.get("userId");
+        this.$store.state.userName = this.$cookies.get("userName");
       }
     },
   },
   created() {
     this.loginState();
   },
-  computed: {},
+  computed: {
+    ifEditor() {
+      return this.$store.state.isEditor;
+    },
+  },
 };
 </script>
 
