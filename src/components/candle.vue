@@ -75,7 +75,6 @@ export default {
       }
     },
   },
-
   mounted() {
     this.doSetTimeout();
   },
@@ -188,7 +187,6 @@ h1 span:nth-child(8) {
   top: 70%;
   transform: scale(1.5, 1.5) translate(-50%, -50%);
 }
-
 .floor {
   position: absolute;
   left: 50%;
@@ -200,7 +198,6 @@ h1 span:nth-child(8) {
   box-shadow: 0px 2px 5px #111;
   z-index: 2;
 }
-
 .candles {
   position: absolute;
   left: 50%;
@@ -210,7 +207,6 @@ h1 span:nth-child(8) {
   transform: translate(-50%, -100%);
   z-index: 1;
 }
-
 .candle1 {
   position: absolute;
   left: 50%;
@@ -226,7 +222,6 @@ h1 span:nth-child(8) {
   box-shadow: -2px 0px 0px #95c6f2 inset;
   animation: expand-body 3s infinite linear;
 }
-
 .candle1__stick,
 .candle2__stick {
   position: absolute;
@@ -238,13 +233,11 @@ h1 span:nth-child(8) {
   border-radius: 8px;
   transform: translate(-50%, -100%);
 }
-
 .candle2__stick {
   height: 12px;
   transform-origin: bottom center;
   animation: stick-animation 3s infinite linear;
 }
-
 .candle1__eyes,
 .candle2__eyes {
   position: absolute;
@@ -254,7 +247,6 @@ h1 span:nth-child(8) {
   height: 30px;
   transform: translate(-50%, 0%);
 }
-
 .candle1__eyes-one {
   position: absolute;
   left: 30%;
@@ -266,7 +258,6 @@ h1 span:nth-child(8) {
   transform: translate(-70%, 0%);
   animation: blink-eyes 3s infinite linear;
 }
-
 .candle1__eyes-two {
   position: absolute;
   left: 70%;
@@ -278,7 +269,6 @@ h1 span:nth-child(8) {
   transform: translate(-70%, 0%);
   animation: blink-eyes 3s infinite linear;
 }
-
 .candle1__mouth {
   position: absolute;
   left: 40%;
@@ -290,7 +280,6 @@ h1 span:nth-child(8) {
   transform: translate(-50%, -50%);
   animation: uff 3s infinite linear;
 }
-
 .candle__smoke-one {
   position: absolute;
   left: 30%;
@@ -301,7 +290,6 @@ h1 span:nth-child(8) {
   transform: translate(-50%, -50%);
   animation: move-left 3s infinite linear;
 }
-
 .candle__smoke-two {
   position: absolute;
   left: 30%;
@@ -313,7 +301,6 @@ h1 span:nth-child(8) {
   transform: translate(-50%, -50%);
   animation: move-top 3s infinite linear;
 }
-
 .candle2 {
   position: absolute;
   left: 20%;
@@ -329,7 +316,6 @@ h1 span:nth-child(8) {
   box-shadow: -2px 0px 0px #95c6f2 inset;
   animation: shake-left 3s infinite linear;
 }
-
 .candle2__eyes-one {
   position: absolute;
   left: 30%;
@@ -344,7 +330,6 @@ h1 span:nth-child(8) {
   transform: translate(-80%, 0%);
   animation: changeto-lower 3s infinite linear;
 }
-
 .candle2__eyes-two {
   position: absolute;
   left: 70%;
@@ -359,7 +344,6 @@ h1 span:nth-child(8) {
   transform: translate(-80%, 0%);
   animation: changeto-greater 3s infinite linear;
 }
-
 .light__wave {
   position: absolute;
   top: 35%;
@@ -372,7 +356,6 @@ h1 span:nth-child(8) {
   border: 2px solid rgba(255, 255, 255, 0.2);
   animation: expand-light 3s infinite linear;
 }
-
 .candle2__fire {
   position: absolute;
   top: 50%;
@@ -386,7 +369,6 @@ h1 span:nth-child(8) {
   transform: translate(-50%, -50%);
   animation: dance-fire 3s infinite linear;
 }
-
 @keyframes blink-eyes {
   0%,
   35% {

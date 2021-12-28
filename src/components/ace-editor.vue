@@ -1,85 +1,57 @@
 <template>
-  <div>
-    <el-input v-model="noteName"></el-input>
-    <el-tabs type="border-card">
-      <el-tab-pane label="HTML">
-        <editor
-          ref="myHTMLEditor"
-          @init="editorInit"
-          lang="html"
-          :theme="theme"
-          width="500"
-          height="100"
-        ></editor>
-      </el-tab-pane>
-      <el-tab-pane label="JavaScript">
-        <editor
-          ref="myJSEditor"
-          @init="editorInit"
-          lang="javascript"
-          :theme="theme"
-          width="500"
-          height="100"
-        ></editor>
-      </el-tab-pane>
-      <el-tab-pane label="CSS">
-        <editor
-          ref="myCSSEditor"
-          @init="editorInit"
-          lang="css"
-          :theme="theme"
-          width="500"
-          height="100"
-        ></editor>
-      </el-tab-pane>
-    </el-tabs>
-    <el-button type="primary" @click="showResult()">RUN</el-button>
-    <el-button type="danger" @click="submitCode()">SAVE</el-button>
-    <!-- <el-button v-if="this.$store.state.noteId != null" @click="newCode()"
-      >NEW</el-button
-    > -->
-    <el-button v-if="this.noteId != null" @click="newCode()">NEW</el-button>
-    <a :href="download" ref="downloadLink">
-      <el-button @click="downloadCode()"> DOWNLOAD </el-button>
-    </a>
-    <div id="log"></div>
-    <el-select v-model="theme" placeholder="更换主题ヾ(•ω•`)o">
-      <el-option
-        v-for="item in themeArr"
-        :key="item"
-        :label="item"
-        :value="item"
-      >
-      </el-option>
-    </el-select>
-
-    <el-select
-      v-model="selected"
-      multiple
-      filterable
-      allow-create
-      placeholder="请选择额外库ヾ(•ω•`)o"
-    >
-      <el-option
-        v-for="item in libs"
-        :key="item.libId"
-        :label="item.libName"
-        :value="item.libContent"
-      >
-      </el-option>
-    </el-select>
-    <codemirror
-      ref="myCm"
-      v-model="consoleLogText"
-      :options="cmOptions"
-      class="code"
-    ></codemirror>
-    <iframe id="result" ref="result" height="1080px" width="720px"></iframe>
-    <el-dialog :visible.sync="isShow">
-      <el-input v-model="noteName"></el-input>
-      <el-button @click="submit">确定</el-button>
-      <el-button @click="isShow = false">取消</el-button>
-    </el-dialog>
+  <div id="bg">
+    <div id="left">
+      <el-tabs type="card" id="input">
+        <el-tab-pane label="HTML">
+          <div class="tab">
+            <editor ref="myHTMLEditor" @init="editorInit" lang="html" :theme="theme"></editor>
+          </div>
+        </el-tab-pane>
+        <el-tab-pane label="JavaScript">
+          <div class="tab">
+            <editor ref="myJSEditor" @init="editorInit" lang="javascript" :theme="theme"></editor>
+          </div>
+        </el-tab-pane>
+        <el-tab-pane label="CSS">
+          <div class="tab">
+            <editor ref="myCSSEditor" @init="editorInit" lang="css" :theme="theme"></editor>
+          </div>
+        </el-tab-pane>
+      </el-tabs>
+    </div>
+    <div id="right">
+      <div id="header">
+        <el-button type="primary" @click="showResult()"><i class="el-icon-video-play"></i>RUN</el-button>
+        <el-button type="danger" @click="submitCode()"><i class="el-icon-upload"></i>SAVE</el-button>
+        <el-button v-if="this.noteId != null" @click="newCode()">NEW</el-button>
+        <a :href="download" ref="downloadLink">
+          <el-button type="warning" @click="downloadCode()"><i class="el-icon-download"></i>DOWNLOAD</el-button>
+        </a>
+        <el-button id="user-btn" type="success" @click="toUser"><i class="el-icon-s-custom"></i>&emsp;{{getName}}</el-button>
+      </div>
+      <!--<el-input v-model="noteName"></el-input>-->
+      <div id="select">
+        <el-tag>编辑框主题:</el-tag>
+        <span id="theme">
+        <el-select v-model="theme" placeholder="更换主题ヾ(•ω•`)o">
+          <el-option v-for="item in themeArr" :key="item" :label="item" :value="item"></el-option>
+        </el-select>
+        </span>
+        <el-tag type="danger">额外JS库:</el-tag>
+        <el-select v-model="selected" multiple collapse-tags placeholder="请选择额外库ヾ(•ω•`)o">
+          <el-option v-for="item in libs" :key="item.libId" :label="item.libName" :value="item.libContent"></el-option>
+        </el-select>
+      </div>
+      <codemirror ref="myCm" v-model="consoleLogText" :options="cmOptions" class="code"></codemirror>
+      <div class="frame">
+        <iframe id="result" ref="result" width="99%" height="99%" ></iframe>
+      </div>
+      <el-dialog :visible.sync="isShow">
+        <el-input v-model="noteName"></el-input>
+        <el-button @click="submit">确定</el-button>
+        <el-button @click="isShow = false">取消</el-button>
+      </el-dialog>
+    </div>
   </div>
 </template>
 
@@ -211,7 +183,22 @@ export default {
     editor,
     codemirror,
   },
+  computed: {
+    getName() {
+      if(this.$store.state.isAuth === 0){
+        return '请登录'
+      } else {
+        return this.$store.state.userName
+      }
+    }
+  },
+  beforeDestroy() {
+    this.$store.state.isEditor = false
+  },
   methods: {
+    toUser() {
+      this.$router.push({ path: "/user-hub" })
+    },
     editorInit: function () {},
     getEditorValue: function (forName) {
       return this.$refs[forName].editor.getValue();
@@ -357,7 +344,7 @@ export default {
       }
       if (this.$store.state.isAuth == 1) {
         this.isShow = true;
-        // if (this.isConfirm) {
+        /* if (this.isConfirm) {
         //   console.log(5454545);
         //   // 不是编辑状态 保存新数据
         //   // if (this.$store.state.noteId == null) {
@@ -444,7 +431,7 @@ export default {
         //         console.log(error);
         //       });
         //   }
-        // }
+        // }*/
       }
     },
     submit() {
@@ -599,13 +586,13 @@ export default {
   },
   created() {
     // 拿到三方库的信息
-    this.getLibs();
-    this.noteId = this.$store.state.noteId;
+    this.getLibs()
+    this.noteId = this.$store.state.noteId
+    this.$store.state.isEditor = true
   },
   mounted() {
     this.getNote();
   },
-  updated() {},
   handleMessage(event) {
     // 根据上面制定的结构来解析iframe内部发回来的数据
     const data = event.data;
@@ -624,3 +611,77 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+#bg{
+  height: 100%;
+  display: flex;
+  flex-direction: row;
+}
+#left{
+  display: flex;
+  flex-direction: column;
+  width: 50%;
+  border-style: dashed;
+  border-radius: 15px;
+  border-color: pink;
+  margin: 0px 5px 0px 0px;
+  padding: 5px;
+}
+#right{
+  display: flex;
+  flex-direction: column;
+  width: 50%;
+  border-style: dashed;
+  border-radius: 15px;
+  border-color: pink;
+  margin: 0px 0px 0px 5px;
+  padding: 5px;
+}
+#input{
+  height: 100%;
+  width: 100%;
+}
+.tab{
+  height: 88vh;
+  width: 100%;
+}
+.code{
+  display: none;
+}
+#select{
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  padding: 5px 10px 5px 0px;
+}
+.el-button{
+  margin: 0px 10px 0px 0px;
+}
+.el-tag{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  font-size: 14px;
+  margin: 0px 5px 0px 0px;
+}
+#user-btn{
+  /*position: relative;
+  right: 0px;*/
+  float: right;
+  margin: 0px;
+}
+.frame{
+  border-style: dashed;
+  border-radius: 15px;
+  border-color: rgb(220, 245, 130);
+  padding: 5px;
+  width: 98%;
+  height: 100%;
+}
+#theme{
+  width: 150px;
+  margin: 0px 10px 0px 0px;
+}
+</style>

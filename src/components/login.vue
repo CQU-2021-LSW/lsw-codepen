@@ -72,35 +72,41 @@ export default {
           })
             .then(({ data }) => {
               // 保存Token和登录信息
-              console.log(data);
+              console.log(data)
               if (data.state) {
-                console.log("认证成功");
-                this.$store.commit("auth", data.userId, data.token);
-                this.$cookies.set("userId", data.userId);
-                console.log("走到这里");
-                this.$router.push({ path: "/user-hub" });
+                console.log("认证成功")
+                console.log(this.ruleForm.userName)
+                var args = {
+                  uid: data.userId,
+                  token: data.token,
+                  name: this.ruleForm.userName
+                }
+                this.$store.commit("auth", args)
+                this.$cookies.set("userId", data.userId)
+                this.$cookies.set("userName", this.ruleForm.userName)
+                this.$router.push({ path: "/user-hub" })
               } else {
-                console.log("失败");
+                console.log("失败")
               }
             })
             .catch(({ error }) => {
-              console.log("err");
-              console.log(error);
+              console.log("err")
+              console.log(error)
             });
         } else {
-          console.log("error submit!!");
+          console.log("error submit!!")
           return false;
         }
       });
     },
     resetForm(formName) {
-      this.$refs[formName].resetFields();
+      this.$refs[formName].resetFields()
     },
     toRegister() {
-      this.$router.push({ path: "/register" });
+      this.$router.push({ path: "/register" })
     },
     toFindbackPassword() {
-      this.$router.push({ path: "/findBackPwd" });
+      this.$router.push({ path: "/findBackPwd" })
     },
   },
 };

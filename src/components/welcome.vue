@@ -1,9 +1,5 @@
 <template>
   <div class="content">
-    <!-- <div>简陋的欢迎界面</div> -->
-    <!-- <div>CSS布局待完善，记得把这两个div</div> -->
-    <!-- <img src="~@/assets/logo.png" /> -->
-    <!-- <cartoon-text></cartoon-text> -->
     <button @click="toEditor">Editor</button>
     <candle></candle>
   </div>
@@ -14,7 +10,6 @@
 import candle from "./candle.vue";
 export default {
   // name: 'App',
-
   data() {
     return {};
   },
@@ -42,7 +37,6 @@ button {
   border-radius: 5px;
   border: 5px solid rgb(245, 243, 245);
   background-color: rgba(216, 207, 216, 0.5);
-
   /* animation: btn-size 3s infinite linear; */
 }
 /* @keyframes btn-size {
