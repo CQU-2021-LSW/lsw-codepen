@@ -6,23 +6,22 @@
 </template>
 
 <script>
-import Header from './components/header.vue'
+import Header from "./components/header.vue";
 
 export default {
-  name: 'App',
+  name: "App",
   components: {
-    Header
+    Header,
   },
   data() {
-    return {
-    }
+    return {};
   },
   methods: {
     loginState() {
-      if (this.$cookies.isKey('userId')) {
-        this.$store.state.isAuth = 1
-        this.$store.state.userId = this.$cookies.get('userId')
-        this.$store.state.userName = this.$cookies.get('userName')
+      if (this.$cookies.isKey("userId")) {
+        this.$store.state.isAuth = 1;
+        this.$store.state.userId = this.$cookies.get("userId");
+        this.$store.state.userName = this.$cookies.get("userName");
       }
     },
   },
@@ -31,16 +30,17 @@ export default {
   },
   computed: {
     ifEditor() {
-      return this.$store.state.isEditor
-    }
-  }
-}
+      return this.$store.state.isEditor;
+    },
+  },
+};
 </script>
 
 <style>
-html,body,
-#app{
-  height:100%;
+html,
+body,
+#app {
+  height: 100%;
   display: flex;
   flex-direction: column;
 }

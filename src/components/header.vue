@@ -1,11 +1,17 @@
 <template>
   <div id="h">
     <el-menu class="header" mode="horizontal" router>
-      <el-menu-item index="/welcome"><img src="../assets/pic.jpg" />&emsp;codepen</el-menu-item>
+      <el-menu-item index="/welcome"
+        ><img src="../assets/pic.jpg" />&emsp;codepen</el-menu-item
+      >
       <el-menu-item index="/comments">评论区</el-menu-item>
-      <el-menu-item v-if="ifLogin" id="r0" index="/login"><img src="../assets/pic.jpg" />&emsp;请登录</el-menu-item>
+      <el-menu-item v-if="ifLogin" id="r0" index="/login"
+        ><img src="../assets/pic.jpg" />&emsp;请登录</el-menu-item
+      >
       <el-submenu v-else id="r1" index="null">
-        <template slot="title"><img src="../assets/pic.jpg" />&emsp;{{userName}}</template>
+        <template slot="title"
+          ><img src="../assets/pic.jpg" />&emsp;{{ userName }}</template
+        >
         <el-menu-item index="/user-hub">个人主页</el-menu-item>
         <el-menu-item index="/welcome" @click="logout">登出</el-menu-item>
       </el-submenu>
@@ -16,40 +22,39 @@
 <script>
 export default {
   data() {
-    return {
-    }
+    return {};
   },
-  methods:{
-    logout(){
+  methods: {
+    logout() {
       // console.log("wuhu!")
-      this.$cookies.remove('userId')
-      this.$cookies.remove('userName')
-      this.$store.commit('unAuth')
-    }
+      this.$cookies.remove("userId");
+      this.$cookies.remove("userName");
+      this.$store.commit("unAuth");
+    },
   },
-  computed:{
+  computed: {
     ifLogin() {
-      return this.$store.state.isAuth === 0
+      return this.$store.state.isAuth === 0;
     },
     userName() {
-      return this.$store.state.userName
-    }
-  }
-}
+      return this.$store.state.userName;
+    },
+  },
+};
 </script>
 
 <style scoped>
-.header{
+.header {
   display: flex;
   flex-direction: row;
   justify-content: flex-start;
-
 }
-#r0,#r1{
+#r0,
+#r1 {
   position: absolute;
   right: 0;
 }
-img{
+img {
   width: auto;
   height: auto;
   max-width: 90%;
