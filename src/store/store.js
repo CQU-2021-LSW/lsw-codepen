@@ -9,6 +9,7 @@ const store = new Vuex.Store({
     userName: null,
     noteId: null,
     isEditor: false,
+    isCache: false
   },
   mutations: {
     // 把参数作为args对象提交  详情见官方文档：提交载荷
@@ -23,6 +24,7 @@ const store = new Vuex.Store({
       state.isAuth = 0
       state.userId = null
       state.userName = null
+      state.noteId = null
       localStorage.setItem("Token","NONE")
       console.log(localStorage.getItem('Token'))
       // console.log(this.$store.state.isAuth)
