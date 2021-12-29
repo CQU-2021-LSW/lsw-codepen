@@ -27,7 +27,7 @@ export default {
   methods: {
     logout() {
       this.$cookies.remove("userId");
-      this.$cookies.remove("userName");
+      // this.$cookies.remove("userName");
       this.$store.commit("unAuth");
     },
   },

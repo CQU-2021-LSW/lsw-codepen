@@ -7,17 +7,22 @@ const store = new Vuex.Store({
     isAuth: 0,
     userId: null,
     userName: null,
+    userData: null,
+    userImg: null, // 图方便就是说
     noteId: null,
-    isEditor: false,
-    isCache: false
+    isEditor: false, // 控制header显示
+    isCache: false, // 代码本地缓存
+    isVerify: false, // 滑动验证
   },
   mutations: {
     // 把参数作为args对象提交  详情见官方文档：提交载荷
     auth (state, args) {
       state.isAuth = 1
       localStorage.setItem('Token', args.token)
-      state.userId = args.uid
-      state.userName = args.name
+      state.userData = args.data
+      state.userImg = args.data.userPhoto
+      state.userId = args.data.userId
+      state.userName = args.data.userName
       console.log('已完成登录')
     },
     unAuth(state) {
@@ -29,7 +34,7 @@ const store = new Vuex.Store({
       console.log(localStorage.getItem('Token'))
       // console.log(this.$store.state.isAuth)
       console.log('已完成登出')
-    }
+    },
   }
 })
 
