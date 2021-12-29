@@ -76,7 +76,7 @@ export default {
 <style scoped>
 .drag{
   position: relative;
-  background-color: #e8e8e8;
+  background-color: #c0c0c0;
   width: 100%;
   height: 34px;
   line-height: 34px;
@@ -84,8 +84,10 @@ export default {
 }
 .handler{
   width: 40px;
-  height: 32px;
+  height: 34px;
+  left: 0px;
   border: 1px solid #ccc;
+  background-color: #fff;
   cursor: move;
 }
 .drag_bg{

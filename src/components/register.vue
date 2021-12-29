@@ -50,11 +50,15 @@
             <el-input type="textarea" v-model="ruleForm.userMotto"></el-input>
         </el-form-item> -->
         <el-form-item>
+          <slide-verify></slide-verify>
+        </el-form-item>
+        <el-form-item>
+          <div class="btndiv">
             <el-button type="primary" @click="submitForm('ruleForm')"><i class="el-icon-check"></i>提交</el-button>
             <el-button el-button @click="resetForm('ruleForm')"><i class="el-icon-refresh-right"></i>重置</el-button>
+          </div>
         </el-form-item>
       </el-form>
-      <slide-verify></slide-verify>
     </div>
   </div>
 </template>
@@ -119,7 +123,7 @@ export default {
         userGender: 0,
         // userMotto: ''
       },
-      state: false, 
+      // state: false, 
       rules: {
         password: [
           { validator: validatePass, trigger: 'blur' }
@@ -138,7 +142,8 @@ export default {
   },
   methods: {
     submitForm(formName) {
-      this.$refs[formName].validate((valid) => {
+      if (this.$store.state.isVerify) {
+        this.$refs[formName].validate((valid) => {
         if (valid) {
           this.$http({
             method: 'post',
@@ -153,13 +158,28 @@ export default {
           })
           .then(({data}) => {
               console.log(data);
-              this.state = data.state
+              //this.state = data.state
+              if (data.code === 0){
+                new Promise((resove) => {
+                  this.$message({ message: '注册成功啦！'})
+                  setTimeout(resove, 2500)
+                })
+                .then(() => {
+                  this.$store.state.isVerify = false
+                  this.$router.push({ path: "/login" })
+                })
+              } else {
+                this.$message({ message: '注册失败，请稍后重试'})
+              }
           })
         } else {
           console.log('error submit!!');
           return false;
         }
       });
+      } else {
+        this.$message({ message: '请先完成滑块验证┗|｀O′|┛ 嗷~~'})
+      }
     },
     resetForm(formName) {
       this.$refs[formName].resetFields();
@@ -205,5 +225,12 @@ export default {
   width: 100px;
   font-size: 14px;
   margin: 0px 20px 0px 0px;
+}
+.btndiv{
+  display: flex;
+  justify-content: center;
+}
+.el-button{
+  margin: 0px 20px;
 }
 </style>
