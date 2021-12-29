@@ -7,21 +7,13 @@
           <el-input v-model="ruleForm.userName"></el-input>
         </el-form-item>
         <el-form-item label="密码" prop="password">
-          <el-input
-            type="password"
-            v-model="ruleForm.password"
-            autocomplete="off"
-          ></el-input>
+          <el-input type="password" v-model="ruleForm.password" autocomplete="off"></el-input>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="login('ruleForm')" plain
-            >提交</el-button
-          >
+          <el-button type="primary" @click="login('ruleForm')" plain>提交</el-button>
           <el-button @click="resetForm('ruleForm')" plain>重置</el-button>
           <el-button type="primary" @click="toRegister()" plain>注册</el-button>
-          <el-button type="danger" @click="toFindbackPassword()" plain
-            >找回密码</el-button
-          >
+          <el-button type="danger" @click="toFindbackPassword()" plain>找回密码</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -34,17 +26,17 @@ export default {
     var checkName = (rule, value, callback) => {
       if (value === "") {
         setTimeout(() => {
-          callback(new Error("请输入用户名、(*￣3￣)╭"));
-        }, 1000);
+          callback(new Error("请输入用户名、(*￣3￣)╭"))
+        }, 1000)
       } else {
-        callback();
+        callback()
       }
     };
     var validatePass = (rule, value, callback) => {
       if (value === "") {
-        callback(new Error("请输入密码"));
+        callback(new Error("请输入密码"))
       } else {
-        callback();
+        callback()
       }
     };
     return {
