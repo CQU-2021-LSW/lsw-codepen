@@ -5,7 +5,7 @@
       status-icon
       :rules="rules"
       ref="newUserInfo"
-      label-width="60px"
+      label-width="55px"
       class="demo-newUserInfo"
     >
       <el-form-item label="用户名" prop="userName">
@@ -27,7 +27,9 @@
         <el-input type="textarea" v-model="newUserInfo.userMotto"></el-input>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" @click="update">提交</el-button>
+        <el-button type="ghost" @click="update" class="submit_btn"
+          >提交</el-button
+        >
         <el-button @click="cancel" class="reset_btn">取消</el-button>
       </el-form-item>
     </el-form>
@@ -81,7 +83,7 @@ export default {
         userAddr: "",
         userEmail: "",
       },
-      isChanging: false,
+      // isChanging: false,
       rules: {
         userName: [{ validator: checkName, trigger: "blur" }],
         userPhone: [{ validator: validatePhoneNumber, trigger: "blur" }],
@@ -128,7 +130,10 @@ export default {
     // },
     update() {
       var tableUser = this.newUserInfo;
-      tableUser = Object({}, tableUser, { userId: this.$store.state.userId });
+      tableUser = Object.assign({}, tableUser, {
+        userId: this.$store.state.userId,
+      });
+      console.log(tableUser);
       //   tableUser.userId = this.$store.state.userId;
       //   console.log(1111);
       this.$http({
@@ -140,11 +145,12 @@ export default {
         if (data && data.code === 0) {
           console.log(data);
           this.getUserInfo();
-          this.isChanging = false;
+          // this.isChanging = false;
           this.$message({
             message: "修改成功┗|｀O′|┛ 嗷~~",
             type: "success",
           });
+          this.$emit("cancelUpdate");
         } else {
           this.$message({
             message: "修改失败(∪.∪ )...zzz用户名or手机号重复",
@@ -166,7 +172,16 @@ export default {
 </script>
 
 <style scoped>
+.submit_btn {
+  background-color: rgb(212, 243, 245);
+}
+.submit_btn:hover,
+.reset_btn:hover {
+  background-color: rgb(248, 228, 184);
+  color: black;
+  /* font-weight: 10px; */
+}
 .reset_btn {
-  margin-left: 30px;
+  margin-left: 20px;
 }
 </style>

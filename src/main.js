@@ -1,6 +1,8 @@
 import Vue from 'vue'
 import App from './App.vue'
 import ElementUI from 'element-ui'
+import ViewUI from 'view-design';
+import 'view-design/dist/styles/iview.css';
 import 'element-ui/lib/theme-chalk/index.css';
 import VueRouter from 'vue-router'
 import router from './router/router.js'
@@ -16,6 +18,7 @@ import 'codemirror/lib/codemirror.css'
 Vue.use(codemirror)
 
 Vue.use(VueCookies)
+Vue.use(ViewUI)
 
 Vue.prototype.$http = axios
 Vue.config.productionTip = false

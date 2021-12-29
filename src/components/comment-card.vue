@@ -11,9 +11,11 @@
       <main>{{ comment.commentText }}</main>
       <footer>
         <span><i class="el-icon-chat-dot-round"></i></span>
-        <span @click="give_a_like"
-          ><i :class="[isLike ? 'el-icon-star-on' : 'el-icon-star-off']"></i
-          >&nbsp;{{ comment.likeCount ? comment.likeCount : "" }}</span
+        <span @click="give_a_like">
+          <Icon type="ios-heart-outline" size="20" v-if="!isLike" />
+          <Icon type="ios-heart" size="20" color="lightPink" v-if="isLike" />
+
+          &nbsp;{{ comment.likeCount ? comment.likeCount : "" }}</span
         >
       </footer>
     </div>
@@ -31,14 +33,44 @@ export default {
   },
   methods: {
     give_a_like() {
-      if (!this.flag) {
-        this.comment.likeCount++;
-        this.flag = true;
-        this.isLike = true;
+      if (!this.$store.state.userId) {
+        this.$message({ message: "请先登录(∪.∪ )...zzz", type: "warning" });
       } else {
-        this.comment.likeCount--;
-        this.flag = false;
-        this.isLike = false;
+        if (!this.flag) {
+          this.$http({
+            method: "post",
+            url: "/comments/doLike",
+            data: { likedCommentId: this.comment.commentId },
+          }).then((res) => {
+            if (res.data.code === 0) {
+              this.comment.likeCount++;
+              this.flag = true;
+              this.isLike = true;
+            } else {
+              this.$message({
+                message: "网络出错啦，请稍后再试~",
+                type: "warning",
+              });
+            }
+          });
+        } else {
+          this.$http({
+            method: "post",
+            url: "/comments/cancelLike",
+            data: { likedCommentId: this.comment.commentId },
+          }).then((res) => {
+            if (res.data.code === 0) {
+              this.comment.likeCount--;
+              this.flag = false;
+              this.isLike = false;
+            } else {
+              this.$message({
+                message: "网络出错啦，请稍后再试~",
+                type: "warning",
+              });
+            }
+          });
+        }
       }
     },
   },
@@ -54,9 +86,10 @@ h4 {
   padding: 0;
 }
 .content {
-  width: 500px;
+  width: 90%;
   /* height: 300px; */
-  padding: 10px 100px;
+  padding: 10px 10px 0 10px;
+  margin: auto;
   /* background-color: antiquewhite; */
 }
 .box header {
@@ -72,7 +105,7 @@ h4 {
 .box header .info_box {
   flex: 1;
   margin-left: 15px;
-  background-color: lightcoral;
+  /* background-color: lightcoral; */
 }
 .info_box span {
   display: block;
@@ -86,18 +119,20 @@ h4 {
 }
 .box main {
   margin-bottom: 10px;
-  background-color: lightskyblue;
+  /* background-color: lightskyblue; */
 }
 .box footer {
-  margin-bottom: 10px;
-  background-color: lightsteelblue;
+  /* margin-bottom: 10px; */
+  /* background-color: lightsteelblue; */
+  padding: 3px 0;
+  border-top: 1px solid lightgrey;
   display: flex;
   justify-content: space-around;
 }
-.box footer .el-icon-star-on {
+/* .box footer .el-icon-star-on {
   color: lightpink;
   font-size: 20px;
   -webkit-text-stroke: rgb(202, 147, 155);
   -webkit-text-stroke-width: 1px;
-}
+} */
 </style>

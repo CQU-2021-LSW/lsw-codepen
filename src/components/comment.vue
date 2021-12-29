@@ -10,8 +10,8 @@
         <comment-card :comment="item"></comment-card>
       </div>
     </div>
-    <el-dialog title="addComment" :visible.sync="isShow">
-      <el-input type="textarea"></el-input>
+    <el-dialog title="发表评论" :visible.sync="isShow" width="500px">
+      <el-input type="textarea" :rows="10"></el-input>
       <div class="file_box">
         <el-upload multiple action="" :auto-upload="false"
           ><i class="el-icon-document-add"></i
@@ -25,19 +25,9 @@
           ><i class="el-icon-picture-outline"></i
         ></el-upload>
       </div>
-
-      <!-- <el-form-item label="Promotion name" :label-width="formLabelWidth">
-      <el-input v-model="form.name" autocomplete="off"></el-input>
-    </el-form-item>
-    <el-form-item label="Zones" :label-width="formLabelWidth">
-      <el-select v-model="form.region" placeholder="Please select a zone">
-        <el-option label="Zone No.1" value="shanghai"></el-option>
-        <el-option label="Zone No.2" value="beijing"></el-option>
-      </el-select>
-    </el-form-item> -->
       <span slot="footer" class="dialog-footer">
-        <el-button @click="isShow = false">Cancel</el-button>
-        <el-button type="primary" @click="isShow = false">Confirm</el-button>
+        <el-button @click="isShow = false" class="cancel">Cancel</el-button>
+        <el-button @click="isShow = false" class="confirm">Confirm</el-button>
       </span>
     </el-dialog>
     <!-- <el-table :data="commentsData" border style="width: 100%">
@@ -83,8 +73,12 @@ export default {
         method: "get",
         url: "/comments/getCommentList",
       }).then(({ data }) => {
-        this.commentsData = data.data.reverse();
-        console.log(this.commentsData);
+        if (data.code === 0) {
+          console.log(data);
+          this.commentsData = data.data.reverse();
+        } else {
+          this.$message({ message: "未知异常，请稍后再试~", type: "warning" });
+        }
       });
     },
     uploadComment() {
@@ -128,7 +122,7 @@ export default {
     this.getCommentList();
   },
   created() {
-    this.getCommentList();
+    // this.getCommentList();
   },
   components: { commentCard },
 };
@@ -136,9 +130,12 @@ export default {
 
 <style scoped>
 .container {
-  background-color: lightpink;
+  border: 1px dashed lightpink;
+  border-radius: 10px;
+  /* background-color: lightpink; */
   width: 60%;
   margin: auto;
+  margin-top: 5px;
 }
 .container header {
   margin: 0 auto;
@@ -148,15 +145,19 @@ export default {
   text-align: right;
 }
 .container header span {
+  color: lightpink;
   margin: 0 20px;
   font-size: 30px;
 }
 .container .box {
-  background-color: aqua;
+  border: 3px outset rgba(211, 211, 211, 0.5);
+  border-radius: 5px;
+  background-color: rgb(225, 245, 240);
   width: 70%;
   margin: auto;
   margin-bottom: 10px;
 }
+
 .file_box {
   margin-top: 10px;
   display: flex;
@@ -174,5 +175,13 @@ export default {
 #pic /deep/ .el-upload-list--picture .el-upload-list__item {
   width: 180px;
   display: inline-block;
+}
+.el-button.confirm {
+  background-color: rgb(216, 241, 245);
+}
+.el-button.confirm:hover,
+.el-button.cancel:hover {
+  color: black;
+  background-color: rgb(245, 197, 178);
 }
 </style>
