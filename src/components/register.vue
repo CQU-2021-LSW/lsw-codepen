@@ -1,5 +1,6 @@
 <template>
   <div id="bg">
+    <candle></candle>
     <div class="input">
       <el-form :model="ruleForm" status-icon :rules="rules" ref="ruleForm">
         <el-form-item prop="userName">
@@ -55,7 +56,7 @@
         <el-form-item>
           <div class="btndiv">
             <el-button type="primary" @click="submitForm('ruleForm')"><i class="el-icon-check"></i>提交</el-button>
-            <el-button el-button @click="resetForm('ruleForm')"><i class="el-icon-refresh-right"></i>重置</el-button>
+            <el-button type="danger" @click="resetForm('ruleForm')"><i class="el-icon-refresh-right"></i>重置</el-button>
           </div>
         </el-form-item>
       </el-form>
@@ -64,16 +65,17 @@
 </template>
 
 <script>
+import Candle from './candle.vue';
 import slideVerify from './slideVerify.vue';
 
 export default {
-  components: { slideVerify },
+  components: { slideVerify, Candle },
   data() {
     var checkName = (rule, value, callback) => {
       if (value === '') {
         setTimeout(() => {
           callback(new Error('请输入用户名、(*￣3￣)╭'));
-        }, 1000);
+        }, 500);
       }
       else{
         callback();
@@ -162,7 +164,7 @@ export default {
               if (data.code === 0){
                 new Promise((resove) => {
                   this.$message({ message: '注册成功啦！'})
-                  setTimeout(resove, 2500)
+                  setTimeout(resove, 2000)
                 })
                 .then(() => {
                   this.$store.state.isVerify = false

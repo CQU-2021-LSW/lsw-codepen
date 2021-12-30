@@ -1,5 +1,6 @@
 <template>
   <div id="a">
+    <candle></candle>
     <!-- <img id="bg" src="../assets/bg.jpg"/> -->
     <div id="input">
       <el-form :model="ruleForm" status-icon :rules="rules" ref="ruleForm">
@@ -33,13 +34,15 @@
 </template>
 
 <script>
+import candle from './candle.vue';
 export default {
+  components: { candle },
   data() {
     var checkName = (rule, value, callback) => {
       if (value === "") {
         setTimeout(() => {
           callback(new Error("请输入用户名、(*￣3￣)╭"))
-        }, 1000)
+        }, 500)
       } else {
         callback()
       }
@@ -88,6 +91,7 @@ export default {
                 }
                 this.$store.commit("auth", args)
                 this.$cookies.set("userId", data.data.userId)
+                this.$message({ message: '登陆成功' })
                 //this.$cookies.set("userName", this.ruleForm.userName)
                 if (this.$store.state.isCache){
                   this.$router.push({ path: "/editor" })
@@ -96,6 +100,7 @@ export default {
                 }
               } else {
                 console.log("失败")
+                this.$message({ message: '用户名或密码错误' })
               }
             })
             .catch(({ error }) => {
@@ -124,19 +129,19 @@ export default {
 <style scoped>
 #a {
   height: 100%;
-  background-image: url("../assets/bg.jpg");
-  background-size: 100% 100%;
+  /*background-image: url("../assets/bg.jpg");
+  background-size: 100% 100%;*/
 }
 #input {
   position: absolute;
   background-color: rgba(255, 192, 203, 0.5);
   border-radius: 10px;
-  height: 220px;
+  height: 230px;
   width: 360px;
   padding: 20px 20px 0px 20px;
   top: 50%;
   left: 50%;
-  margin: -110px -180px;
+  margin: -115px -180px;
 }
 /*.el-button {
   margin: 10px 10px;
@@ -166,7 +171,7 @@ export default {
   display: flex;
   flex-direction: row;
   justify-content: space-around;
-  margin: 10px 0px 0px 0px;
+  margin: 5px 0px 0px 0px;
 }
 /* #bg{
   position:absolute;
