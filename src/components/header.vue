@@ -51,11 +51,11 @@ export default {
       } else {
         // console.log(2222);
         if (this.$store.state.userImg.indexOf("http") != -1) {
-          console.log(2222);
+          // console.log(2222);
           console.log(this.$store.state.userImg);
           return this.$store.state.userImg;
         } else {
-          console.log(3333);
+          // console.log(3333);
           return "http://" + this.$store.state.userImg;
         }
         // console.log(this.$store.state.userImg);

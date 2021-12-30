@@ -43,8 +43,9 @@ export default {
       this.userImg = "http://" + this.comment.userPhoto;
     }
     this.isLike = this.comment.liked;
-    localStorage.setItem("liked", this.comment.liked);
-    localStorage.setItem("likeCount", this.comment.likeCount);
+    localStorage.setItem("commentInfo", this.comment);
+    // localStorage.setItem("liked", this.comment.liked);
+    // localStorage.setItem("likeCount", this.comment.likeCount);
   },
   mounted() {
     // console.log(this.comment);
@@ -66,10 +67,13 @@ export default {
           }).then((res) => {
             if (res.data.code === 0) {
               this.comment.likeCount++;
-              localStorage.setItem("liked", 1);
-              localStorage.setItem("likeCount", this.comment.likeCount);
-              // this.flag = true;
               this.comment.liked = 1;
+              // localStorage.setItem("liked", 1);
+              // localStorage.setItem("likeCount", this.comment.likeCount);
+              localStorage.setItem("commentInfo", JSON.stringify(this.comment));
+              this.$store.commit("getCommentId", this.comment);
+              // this.flag = true;
+
               this.isLike = true;
             } else {
               this.$message({
@@ -89,10 +93,13 @@ export default {
           }).then((res) => {
             if (res.data.code === 0) {
               this.comment.likeCount--;
-              localStorage.setItem("liked", 0);
-              localStorage.setItem("likeCount", this.comment.likeCount);
-              // this.flag = false;
               this.comment.liked = 0;
+              // localStorage.setItem("liked", 0);
+              // localStorage.setItem("likeCount", this.comment.likeCount);
+              localStorage.setItem("commentInfo", JSON.stringify(this.comment));
+              this.$store.commit("getCommentId", this.comment);
+              // this.flag = false;
+
               this.isLike = false;
             } else {
               this.$message({
@@ -107,14 +114,14 @@ export default {
     give_a_subcomment() {
       let commentId = this.comment.commentId;
       this.$emit("wantAdd", commentId);
-      console.log(245121);
+      // console.log(245121);
     },
     toSpecifyComment() {
       // console.log(this.comment);
       localStorage.setItem("commentInfo", JSON.stringify(this.comment));
       this.$store.commit("getCommentId", this.comment);
       this.$router.push({ path: "/specifyComment" });
-      console.log(656232);
+      // console.log(656232);
     },
     formatDate(date) {
       // console.log(date);

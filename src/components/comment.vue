@@ -178,6 +178,7 @@ export default {
     this.getCommentList();
   },
   created() {
+    console.log(11111);
     // this.getCommentList();
   },
   components: { commentCard, myDialog },

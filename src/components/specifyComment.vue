@@ -63,8 +63,12 @@ export default {
   components: { subComment, myDialog },
   created() {
     if (this.$store.state.commentInfo == null) {
+      console.log(2222);
+      // console.log(localStorage.getItem("commentInfo"));
       this.comment = JSON.parse(localStorage.getItem("commentInfo"));
+      // console.log(this.comment);
     } else {
+      console.log(33333);
       this.comment = this.$store.state.commentInfo;
     }
   },
@@ -106,7 +110,7 @@ export default {
         params: data,
       }).then((res) => {
         this.subComments = res.data.data;
-        console.log(this.subComments);
+        // console.log(this.subComments);
         // console.log(res.data.data);
       });
     },
@@ -126,10 +130,12 @@ export default {
             if (res.data.code === 0) {
               this.likeCount++;
               this.comment.likeCount++;
-              localStorage.setItem("liked", 1);
-              localStorage.setItem("likeCount", this.likeCount);
-              // this.flag = true;
               this.comment.liked = 1;
+              // localStorage.setItem("liked", 1);
+              // localStorage.setItem("likeCount", this.likeCount);
+              localStorage.setItem("commentInfo", JSON.stringify(this.comment));
+              // this.flag = true;
+
               this.isLike = true;
             } else {
               this.$message({
@@ -150,10 +156,12 @@ export default {
             if (res.data.code === 0) {
               this.likeCount--;
               this.comment.likeCount--;
-              localStorage.setItem("liked", 0);
-              localStorage.setItem("likeCount", this.likeCount);
-              // this.flag = false;
               this.comment.liked = 0;
+              // localStorage.setItem("liked", 0);
+              // localStorage.setItem("likeCount", this.likeCount);
+              localStorage.setItem("commentInfo", JSON.stringify(this.comment));
+              // this.flag = false;
+
               this.isLike = false;
             } else {
               this.$message({
@@ -167,7 +175,7 @@ export default {
     },
     give_a_subcomment() {
       this.isShow = true;
-      console.log(245121);
+      // console.log(245121);
     },
     // toSpecifyComment() {
     //   this.$store.commit("getCommentId", this.comment);
