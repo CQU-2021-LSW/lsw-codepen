@@ -14,6 +14,7 @@ import userHub from '../components/user-hub.vue'
 import noteList from '../components/noteList.vue'
 import comment from '../components/comment.vue'
 import welcome from '../components/welcome.vue'
+import specifyComment from '../components/specifyComment'
 
 //定义routes路由的集合，数组类型
 const routes = [
@@ -27,7 +28,8 @@ const routes = [
     {path:'/user-hub',name:'uerHub',component:userHub},
     {path:'/noteList',name:'noteList',component:noteList},
     {path:'/comments',name:'comments',component:comment},
-    {path:'/welcome',name:'welcome',component:welcome}
+    {path:'/welcome',name:'welcome',component:welcome},
+    {path:'/specifyComment',name:'specifyComment',component:specifyComment}
 ]
 
 //实例化VueRouter并将routes添加进去

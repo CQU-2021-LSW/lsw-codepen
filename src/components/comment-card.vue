@@ -1,6 +1,6 @@
 <template>
   <div class="content">
-    <div class="box">
+    <div class="box" @click="toSpecifyComment">
       <header>
         <div class="img_box">
           <img :src="userImg" alt="" />
@@ -12,8 +12,10 @@
       </header>
       <main>{{ comment.commentText }}</main>
       <footer>
-        <span><i class="el-icon-chat-dot-round"></i></span>
-        <span @click="give_a_like">
+        <span @click.stop="give_a_subcomment"
+          ><i class="el-icon-chat-dot-round"></i
+        ></span>
+        <span @click.stop="give_a_like">
           <Icon type="ios-heart-outline" size="20" v-if="!isLike" />
           <Icon type="ios-heart" size="20" color="lightPink" v-if="isLike" />
 
@@ -40,6 +42,9 @@ export default {
     } else {
       this.userImg = "http://" + this.comment.userPhoto;
     }
+    this.isLike = this.comment.liked;
+    localStorage.setItem("liked", this.comment.liked);
+    localStorage.setItem("likeCount", this.comment.likeCount);
   },
   mounted() {
     // console.log(this.comment);
@@ -50,15 +55,21 @@ export default {
       if (!this.$store.state.userId) {
         this.$message({ message: "请先登录(∪.∪ )...zzz", type: "warning" });
       } else {
-        if (!this.flag) {
+        if (!this.isLike) {
           this.$http({
             method: "post",
             url: "/comments/doLike",
-            data: { likedCommentId: this.comment.commentId },
+            data: {
+              likedPostId: this.$store.state.userId,
+              likedCommentId: this.comment.commentId,
+            },
           }).then((res) => {
             if (res.data.code === 0) {
               this.comment.likeCount++;
-              this.flag = true;
+              localStorage.setItem("liked", 1);
+              localStorage.setItem("likeCount", this.comment.likeCount);
+              // this.flag = true;
+              this.comment.liked = 1;
               this.isLike = true;
             } else {
               this.$message({
@@ -71,11 +82,17 @@ export default {
           this.$http({
             method: "post",
             url: "/comments/cancelLike",
-            data: { likedCommentId: this.comment.commentId },
+            data: {
+              likedPostId: this.$store.state.userId,
+              likedCommentId: this.comment.commentId,
+            },
           }).then((res) => {
             if (res.data.code === 0) {
               this.comment.likeCount--;
-              this.flag = false;
+              localStorage.setItem("liked", 0);
+              localStorage.setItem("likeCount", this.comment.likeCount);
+              // this.flag = false;
+              this.comment.liked = 0;
               this.isLike = false;
             } else {
               this.$message({
@@ -86,6 +103,18 @@ export default {
           });
         }
       }
+    },
+    give_a_subcomment() {
+      let commentId = this.comment.commentId;
+      this.$emit("wantAdd", commentId);
+      console.log(245121);
+    },
+    toSpecifyComment() {
+      // console.log(this.comment);
+      localStorage.setItem("commentInfo", JSON.stringify(this.comment));
+      this.$store.commit("getCommentId", this.comment);
+      this.$router.push({ path: "/specifyComment" });
+      console.log(656232);
     },
     formatDate(date) {
       // console.log(date);

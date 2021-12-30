@@ -13,6 +13,8 @@ const store = new Vuex.Store({
     isEditor: false, // 控制header显示
     isCache: false, // 代码本地缓存
     isVerify: false, // 滑动验证
+    commentInfo:null,
+
   },
   mutations: {
     // 把参数作为args对象提交  详情见官方文档：提交载荷
@@ -42,6 +44,9 @@ const store = new Vuex.Store({
     },
     updateUserImg(state,img){
       state.userImg=img
+    },
+    getCommentId(state,comment){
+      state.commentInfo=comment
     }
   }
 })

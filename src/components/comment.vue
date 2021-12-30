@@ -2,15 +2,16 @@
   <div class="content">
     <div class="container">
       <header>
-        <span @click="isShow = true"
-          ><i class="el-icon-edit-outline"></i>
-        </span>
+        <span @click="addNew"><i class="el-icon-edit-outline"></i> </span>
       </header>
       <div class="box" v-for="(item, idx) in commentsData" :key="idx">
-        <comment-card :comment="item"></comment-card>
+        <comment-card :comment="item" @wantAdd="beClicked"></comment-card>
       </div>
     </div>
-    <el-dialog title="发表评论" :visible.sync="isShow" width="600px">
+    <div id="dialog" v-if="isShow">
+      <my-dialog :clickedId="beClickedId"></my-dialog>
+    </div>
+    <!-- <el-dialog title="发表评论" :visible.sync="isShow" width="600px">
       <el-input type="textarea" :rows="15" v-model="textarea">{{
         textarea
       }}</el-input>
@@ -23,8 +24,8 @@
           :on-remove="handleRemove"
           :file-list="list"
           ><i class="el-icon-document-add"></i
-        ></el-upload>
-        <!-- <el-upload
+        ></el-upload> -->
+    <!-- <el-upload
           multiple
           list-type="picture"
           action=""
@@ -32,73 +33,101 @@
           :auto-upload="false"
           ><i class="el-icon-picture-outline"></i
         ></el-upload> -->
-      </div>
+    <!-- </div>
       <span slot="footer" class="dialog-footer">
         <el-button @click="isShow = false" class="cancel">Cancel</el-button>
         <el-button @click="uploadComment" class="confirm">Confirm</el-button>
       </span>
-    </el-dialog>
+    </el-dialog> -->
   </div>
 </template>
 
 <script>
 import commentCard from "./comment-card.vue";
+import myDialog from "./myDialog.vue";
 export default {
   data() {
     return {
       commentsData: [],
-      textarea: "",
+      // textarea: "",
       // rowKey: "",
       isShow: false,
-      row: 0,
-      textMap: new Map(),
-      list: [],
+      // row: 0,
+      // textMap: new Map(),
+      // list: [],
+      beClickedId: 0,
     };
   },
   methods: {
     getCommentList() {
-      this.$http({
-        method: "get",
-        url: "/comments/getCommentList",
-      }).then(({ data }) => {
-        if (data.code === 0) {
-          console.log(data);
-          this.commentsData = data.data.reverse();
-        } else {
-          this.$message({ message: "未知异常，请稍后再试~", type: "warning" });
-        }
-      });
-    },
-    uploadComment() {
-      if (this.textarea.length == 0) {
-        this.$message({ message: "没有内容Ψ(￣∀￣)Ψ" });
-        return;
-      }
-      if (this.$store.state.userId != null) {
+      // console.log(this.$store.state.userId);
+      // console.log(1111);
+      if (this.$cookies.get("userId") == null) {
         this.$http({
-          method: "post",
-          url: "/comments/uploadComment",
-          data: {
-            userId: this.$store.state.userId,
-            commentText: this.textarea,
-            likes: 0,
-            topicId: 0,
-            preCommentId: 0,
-          },
+          method: "get",
+          url: "/comments/getCommentList",
         }).then(({ data }) => {
-          console.log(data);
-          this.$message({ message: "发表成功" });
-          this.getCommentList();
-          location.reload();
-          this.textarea = "";
-          this.textMap.clear();
-          this.list = [];
-          this.isShow = false;
+          if (data.code === 0) {
+            console.log(data);
+            this.commentsData = data.data.reverse();
+          } else {
+            this.$message({
+              message: "未知异常，请稍后再试~",
+              type: "warning",
+            });
+          }
         });
       } else {
-        this.$message({ message: "请先登录(∪.∪ )...zzz" });
+        // console.log(this.$store.state.userId);
+        this.$http({
+          method: "get",
+          url: "/comments/getCommentList",
+          params: { userId: this.$cookies.get("userId") },
+        }).then(({ data }) => {
+          if (data.code === 0) {
+            console.log(data);
+            this.commentsData = data.data.reverse();
+          } else {
+            this.$message({
+              message: "未知异常，请稍后再试~",
+              type: "warning",
+            });
+          }
+        });
       }
     },
+    addNew() {
+      this.beClickedId = 0;
+      this.isShow = true;
+    },
+    // uploadComment() {
+    //   if (this.textarea.length == 0) {
+    //     this.$message({ message: "没有内容Ψ(￣∀￣)Ψ" });
+    //     return;
+    //   }
+    //   if (this.$store.state.userId != null) {
+    //     this.$http({
+    //       method: "post",
+    //       url: "/comments/uploadComment",
+    //       data: {
+    //         userId: this.$store.state.userId,
+    //         commentText: this.textarea,
+    //         preCommentId: this.beClickedId,
+    //       },
+    //     }).then(({ data }) => {
+    //       console.log(data);
+    //       this.$message({ message: "发表成功" });
+    //       this.getCommentList();
+    //       location.reload();
+    //       this.textarea = "";
+    //       this.textMap.clear();
+    //       this.list = [];
+    //       this.isShow = false;
+    //     });
+    //   } else {
+    //     this.$message({ message: "请先登录(∪.∪ )...zzz" });
+    //   }
+    // },
     showScope(data) {
       console.log(data);
     },
@@ -110,35 +139,39 @@ export default {
       }
     },
     // handlePreview() {},
-    handleChange(file) {
-      console.log(file.name.split(".")[1]);
-      var reader = new FileReader();
-      var str = "(.txt|.html|.htm|.js|.css)";
-      var reg = new RegExp(str);
-      if (reg.test(file.name)) {
-        console.log(1111);
-        let _this = this;
-        reader.onload = function () {
-          // console.log(res);
-          _this.textMap.set(file.name, this.result + "\r\n");
-          // console.log(_this.textMap);
-          console.log(_this.textMap);
-          _this.textarea += this.result + "\r\n";
-          // console.log(_this.row);
-        };
-        reader.readAsText(file.raw);
-      }
-    },
-    handleRemove(file) {
-      this.textMap.delete(file.name);
-      // console.log(this.textMap);
-      this.renderText();
-    },
-    renderText() {
-      this.textarea = "";
-      for (const text of this.textMap) {
-        this.textarea += text + "\r\n";
-      }
+    // handleChange(file) {
+    //   console.log(file.name.split(".")[1]);
+    //   var reader = new FileReader();
+    //   var str = "(.txt|.html|.htm|.js|.css)";
+    //   var reg = new RegExp(str);
+    //   if (reg.test(file.name)) {
+    //     console.log(1111);
+    //     let _this = this;
+    //     reader.onload = function () {
+    //       // console.log(res);
+    //       _this.textMap.set(file.name, this.result + "\r\n");
+    //       // console.log(_this.textMap);
+    //       console.log(_this.textMap);
+    //       _this.textarea += this.result + "\r\n";
+    //       // console.log(_this.row);
+    //     };
+    //     reader.readAsText(file.raw);
+    //   }
+    // },
+    // handleRemove(file) {
+    //   this.textMap.delete(file.name);
+    //   // console.log(this.textMap);
+    //   this.renderText();
+    // },
+    // renderText() {
+    //   this.textarea = "";
+    //   for (const text of this.textMap) {
+    //     this.textarea += text + "\r\n";
+    //   }
+    // },
+    beClicked(commentId) {
+      this.beClickedId = commentId;
+      this.isShow = true;
     },
   },
   mounted() {
@@ -147,11 +180,16 @@ export default {
   created() {
     // this.getCommentList();
   },
-  components: { commentCard },
+  components: { commentCard, myDialog },
 };
 </script>
 
 <style scoped>
+#dialog {
+  position: absolute;
+  display: block;
+}
+
 .container {
   border: 3px dashed lightpink;
   border-radius: 10px;
