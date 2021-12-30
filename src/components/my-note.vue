@@ -1,8 +1,9 @@
 <template>
   <div class="container" :note="note" :key="idx" @click="edit(note)">
-    <div class="contentBox">123</div>
+    <!-- <div class="contentBox">123</div> -->
+    <h4>{{ note.noteName }}</h4>
     <footer>
-      <h4>{{ note.noteName }}</h4>
+      <!-- <h4>{{ note.noteName }}</h4> -->
       <div class="tag">
         <span v-if="note.htmlCode"><span class="htmlCircle"></span>HTML</span>
         <span v-if="note.cssCode"><span class="cssCircle"></span>CSS</span>
@@ -21,11 +22,14 @@ export default {
     edit(note) {
       this.$store.state.noteId = note.noteId;
       this.$router.push({ path: "/editor/" + note.noteName });
-      console.log(note);
+      // console.log(note);
     },
     formatDate(date) {
       // console.log(date);
-      this.note.noteCreateTime = date.split("T")[0];
+      // console.log(date);
+      var time = date.split("T");
+      // console.log(time);
+      this.note.noteCreateTime = time[0] + "    " + time[1];
     },
   },
   mounted() {
@@ -36,7 +40,9 @@ export default {
 
 <style scoped>
 h4 {
-  font-size: 20px;
+  font-size: 30px;
+  padding: 20px 0;
+  /* white-space: pre; */
 }
 .contentBox {
   /* display: block; */
@@ -76,5 +82,6 @@ h4 {
 .tag .date {
   float: right;
   margin-right: 0;
+  white-space: pre;
 }
 </style>

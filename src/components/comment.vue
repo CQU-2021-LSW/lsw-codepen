@@ -10,49 +10,34 @@
         <comment-card :comment="item"></comment-card>
       </div>
     </div>
-    <el-dialog title="发表评论" :visible.sync="isShow" width="500px">
-      <el-input type="textarea" :rows="10"></el-input>
+    <el-dialog title="发表评论" :visible.sync="isShow" width="600px">
+      <el-input type="textarea" :rows="15" v-model="textarea">{{
+        textarea
+      }}</el-input>
       <div class="file_box">
-        <el-upload multiple action="" :auto-upload="false"
+        <el-upload
+          multiple
+          action=""
+          :auto-upload="false"
+          :on-change="handleChange"
+          :on-remove="handleRemove"
+          :file-list="list"
           ><i class="el-icon-document-add"></i
         ></el-upload>
-        <el-upload
+        <!-- <el-upload
           multiple
           list-type="picture"
           action=""
           id="pic"
           :auto-upload="false"
           ><i class="el-icon-picture-outline"></i
-        ></el-upload>
+        ></el-upload> -->
       </div>
       <span slot="footer" class="dialog-footer">
         <el-button @click="isShow = false" class="cancel">Cancel</el-button>
-        <el-button @click="isShow = false" class="confirm">Confirm</el-button>
+        <el-button @click="uploadComment" class="confirm">Confirm</el-button>
       </span>
     </el-dialog>
-    <!-- <el-table :data="commentsData" border style="width: 100%">
-      <el-table-column fixed prop="userName" label="用户" width="300">
-      </el-table-column>
-      <el-table-column prop="commentCreateTime" label="创建日期" width="200">
-      </el-table-column>
-      <el-table-column prop="commentText" label="内容" width="1000"> </el-table-column>
-      <el-table-column prop="userId" fixed="right" width="500">
-        <template slot-scope="scope">
-          <el-button type = "primary">点赞</el-button>
-          <el-button type="danger" v-if="isCurrentUser(scope.row)" @click="deleteComment()">删除</el-button>
-        </template>
-      </el-table-column>
-    </el-table>
-    <div id="bottom">
-      <el-input
-        type="textarea"
-        :autosize="{ minRows: 3, maxRows: 4 }"
-        placeholder="这里评论"
-        v-model="textarea"
-      >
-      </el-input>
-      <el-button type="primary" @click="uploadComment()"> 提交 </el-button>
-    </div> -->
   </div>
 </template>
 
@@ -65,6 +50,9 @@ export default {
       textarea: "",
       // rowKey: "",
       isShow: false,
+      row: 0,
+      textMap: new Map(),
+      list: [],
     };
   },
   methods: {
@@ -99,8 +87,13 @@ export default {
           },
         }).then(({ data }) => {
           console.log(data);
+          this.$message({ message: "发表成功" });
           this.getCommentList();
+          location.reload();
           this.textarea = "";
+          this.textMap.clear();
+          this.list = [];
+          this.isShow = false;
         });
       } else {
         this.$message({ message: "请先登录(∪.∪ )...zzz" });
@@ -116,7 +109,37 @@ export default {
         return false;
       }
     },
-    handlePreview() {},
+    // handlePreview() {},
+    handleChange(file) {
+      console.log(file.name.split(".")[1]);
+      var reader = new FileReader();
+      var str = "(.txt|.html|.htm|.js|.css)";
+      var reg = new RegExp(str);
+      if (reg.test(file.name)) {
+        console.log(1111);
+        let _this = this;
+        reader.onload = function () {
+          // console.log(res);
+          _this.textMap.set(file.name, this.result + "\r\n");
+          // console.log(_this.textMap);
+          console.log(_this.textMap);
+          _this.textarea += this.result + "\r\n";
+          // console.log(_this.row);
+        };
+        reader.readAsText(file.raw);
+      }
+    },
+    handleRemove(file) {
+      this.textMap.delete(file.name);
+      // console.log(this.textMap);
+      this.renderText();
+    },
+    renderText() {
+      this.textarea = "";
+      for (const text of this.textMap) {
+        this.textarea += text + "\r\n";
+      }
+    },
   },
   mounted() {
     this.getCommentList();
@@ -130,7 +153,7 @@ export default {
 
 <style scoped>
 .container {
-  border: 1px dashed lightpink;
+  border: 3px dashed lightpink;
   border-radius: 10px;
   /* background-color: lightpink; */
   width: 60%;
@@ -155,27 +178,27 @@ export default {
   background-color: rgb(225, 245, 240);
   width: 70%;
   margin: auto;
-  margin-bottom: 10px;
+  margin-bottom: 30px;
 }
 
 .file_box {
   margin-top: 10px;
-  display: flex;
+  /* display: flex; */
 }
-#pic {
+/* #pic {
   margin-left: 20px;
-}
+} */
 .file_box i {
   font-size: 20px;
 }
-#pic /deep/ .el-upload-list {
+/* #pic /deep/ .el-upload-list {
   display: flex;
   flex-wrap: wrap;
 }
 #pic /deep/ .el-upload-list--picture .el-upload-list__item {
   width: 180px;
   display: inline-block;
-}
+} */
 .el-button.confirm {
   background-color: rgb(216, 241, 245);
 }

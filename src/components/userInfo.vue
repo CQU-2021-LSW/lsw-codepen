@@ -9,22 +9,22 @@
       class="demo-newUserInfo"
     >
       <el-form-item label="用户名" prop="userName">
-        <el-input v-model="newUserInfo.userName"></el-input>
+        <el-input v-model="newUserInfo1.userName"></el-input>
       </el-form-item>
       <el-form-item label="性别" prop="userGender">
-        <el-input v-model="newUserInfo.userGender"></el-input>
+        <el-input v-model="newUserInfo1.userGender"></el-input>
       </el-form-item>
       <el-form-item label="手机号" prop="userPhone">
-        <el-input v-model.number="newUserInfo.userPhone"></el-input>
+        <el-input v-model.number="newUserInfo1.userPhone"></el-input>
       </el-form-item>
       <el-form-item label="地址" prop="userAddr">
-        <el-input v-model="newUserInfo.userAddr"></el-input>
+        <el-input v-model="newUserInfo1.userAddr"></el-input>
       </el-form-item>
       <el-form-item label="邮箱" prop="userEmail">
-        <el-input v-model="newUserInfo.userEmail"></el-input>
+        <el-input v-model="newUserInfo1.userEmail"></el-input>
       </el-form-item>
       <el-form-item label="格言" prop="userMotto">
-        <el-input type="textarea" v-model="newUserInfo.userMotto"></el-input>
+        <el-input type="textarea" v-model="newUserInfo1.userMotto"></el-input>
       </el-form-item>
       <el-form-item>
         <el-button type="ghost" @click="update" class="submit_btn"
@@ -65,24 +65,26 @@ export default {
       }, 1000);
     };
     return {
-      userInfo: {
-        userName: "",
-        userPhone: "",
-        userGender: "",
-        userMotto: "",
-        userCreateTime: "",
-        userAddr: "",
-        userEmail: "",
-      },
-      newUserInfo: {
-        userName: "",
-        userPhone: "",
-        userGender: "",
-        userMotto: "",
-        userCreateTime: "",
-        userAddr: "",
-        userEmail: "",
-      },
+      userInfo1: null,
+      // userInfo: {
+      //   userName: "",
+      //   userPhone: "",
+      //   userGender: "",
+      //   userMotto: "",
+      //   userCreateTime: "",
+      //   userAddr: "",
+      //   userEmail: "",
+      // },
+      newUserInfo1: null,
+      // newUserInfo: {
+      //   userName: "",
+      //   userPhone: "",
+      //   userGender: "",
+      //   userMotto: "",
+      //   userCreateTime: "",
+      //   userAddr: "",
+      //   userEmail: "",
+      // },
       // isChanging: false,
       rules: {
         userName: [{ validator: checkName, trigger: "blur" }],
@@ -91,31 +93,37 @@ export default {
     };
   },
   methods: {
-    getUserInfo() {
-      this.$http
-        .get("user/userInfo", {
-          params: {
-            userId: this.$store.state.userId,
-          },
-        })
-        .then(({ data }) => {
-          console.log(data);
-          this.userInfo.userName = data.data.userName;
-          this.userInfo.userPhone = data.data.userPhone;
-          this.userInfo.userGender = data.data.userGender;
-          this.userInfo.userMotto = data.data.userMotto;
-          this.userInfo.userCreateTime = data.data.userCreateTime;
-          this.userInfo.userAddr = data.data.userAddr;
-          this.userInfo.userEmail = data.data.userEmail;
-          this.newUserInfo.userName = data.data.userName;
-          this.newUserInfo.userPhone = data.data.userPhone;
-          this.newUserInfo.userGender = data.data.userGender;
-          this.newUserInfo.userMotto = data.data.userMotto;
-          this.newUserInfo.userCreateTime = data.data.userCreateTime;
-          this.newUserInfo.userAddr = data.data.userAddr;
-          this.newUserInfo.userEmail = data.data.userEmail;
-        });
+    getUserInfo1() {
+      this.userInfo1 = this.$store.state.userData;
+      this.newUserInfo1 = this.$store.state.userData;
+      // console.log(111);
+      // console.log(this.userInfo1);
     },
+    // getUserInfo() {
+    //   this.$http
+    //     .get("user/userInfo", {
+    //       params: {
+    //         userId: this.$store.state.userId,
+    //       },
+    //     })
+    //     .then(({ data }) => {
+    //       console.log(data);
+    //       this.userInfo.userName = data.data.userName;
+    //       this.userInfo.userPhone = data.data.userPhone;
+    //       this.userInfo.userGender = data.data.userGender;
+    //       this.userInfo.userMotto = data.data.userMotto;
+    //       this.userInfo.userCreateTime = data.data.userCreateTime;
+    //       this.userInfo.userAddr = data.data.userAddr;
+    //       this.userInfo.userEmail = data.data.userEmail;
+    //       this.newUserInfo.userName = data.data.userName;
+    //       this.newUserInfo.userPhone = data.data.userPhone;
+    //       this.newUserInfo.userGender = data.data.userGender;
+    //       this.newUserInfo.userMotto = data.data.userMotto;
+    //       this.newUserInfo.userCreateTime = data.data.userCreateTime;
+    //       this.newUserInfo.userAddr = data.data.userAddr;
+    //       this.newUserInfo.userEmail = data.data.userEmail;
+    //     });
+    // },
     // logout() {
     //   this.$store.commit("unAuth");
     //   this.$store.state.userId = "";
@@ -129,7 +137,7 @@ export default {
     //   console.log("changing");
     // },
     update() {
-      var tableUser = this.newUserInfo;
+      var tableUser = this.newUserInfo1;
       tableUser = Object.assign({}, tableUser, {
         userId: this.$store.state.userId,
       });
@@ -141,11 +149,13 @@ export default {
         url: "/user/update",
         data: tableUser,
       }).then(({ data }) => {
-        console.log(data.code);
+        // console.log(data.code);
         if (data && data.code === 0) {
-          console.log(data);
-          this.getUserInfo();
+          // console.log(data);
+          // this.getUserInfo();
           // this.isChanging = false;
+          // this.$store.state.userName = this.newUserInfo1.userName;
+          this.$store.commit("updateUserInfo", this.newUserInfo1);
           this.$message({
             message: "修改成功┗|｀O′|┛ 嗷~~",
             type: "success",
@@ -166,7 +176,8 @@ export default {
   },
   created() {
     // console.log("我创建了");
-    this.getUserInfo();
+    // this.getUserInfo();
+    this.getUserInfo1();
   },
 };
 </script>

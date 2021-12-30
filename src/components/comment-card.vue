@@ -2,7 +2,9 @@
   <div class="content">
     <div class="box">
       <header>
-        <div class="img_box"></div>
+        <div class="img_box">
+          <img :src="userImg" alt="" />
+        </div>
         <div class="info_box">
           <span class="username">{{ comment.userName }}</span>
           <span>{{ comment.commentCreateTime }}</span>
@@ -29,7 +31,19 @@ export default {
     return {
       flag: false,
       isLike: false,
+      userImg: "",
     };
+  },
+  created() {
+    if (this.comment.userPhoto == null) {
+      this.userImg = "http://1.15.53.152:9999/img/photo/524.jpg";
+    } else {
+      this.userImg = "http://" + this.comment.userPhoto;
+    }
+  },
+  mounted() {
+    // console.log(this.comment);
+    this.formatDate(this.comment.commentCreateTime);
   },
   methods: {
     give_a_like() {
@@ -73,6 +87,13 @@ export default {
         }
       }
     },
+    formatDate(date) {
+      // console.log(date);
+      // var time = date.split("T");
+      // console.log(time);
+      this.comment.commentCreateTime = date.split("T")[0];
+    },
+    // formatText() {},
   },
 };
 </script>
@@ -102,6 +123,11 @@ h4 {
   border-radius: 50%;
   background-color: aquamarine;
 }
+header .img_box img {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+}
 .box header .info_box {
   flex: 1;
   margin-left: 15px;
@@ -119,6 +145,8 @@ h4 {
 }
 .box main {
   margin-bottom: 10px;
+  /* white-space: pre-line; */
+  white-space: pre-wrap;
   /* background-color: lightskyblue; */
 }
 .box footer {

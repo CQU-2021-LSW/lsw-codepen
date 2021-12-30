@@ -4,9 +4,9 @@
       <!-- <button @click="loginOut">登出</button> -->
       <div class="info_box">
         <div class="head_box" @click="headerShow = true">
-          <img src="" />
+          <img v-if="headerImgUrl" :src="headerImgUrl" />
         </div>
-        <div class="username">{{ username }}</div>
+        <div class="username">{{ userName }}</div>
         <div class="edit_box">
           <button
             :class="['edit_btn', isWantEdit ? 'btn_hide' : '']"
@@ -32,7 +32,7 @@
     >
       <el-upload
         class="avatar-uploader"
-        action="/upload/imgUpload"
+        action=""
         ref="upload"
         :show-file-list="false"
         method="post"
@@ -77,12 +77,31 @@ export default {
       headerShow: false,
       imgUrl: "",
       imgName: "",
+      FormData: null,
+      userId: 0,
+      headerImgUrl: "",
       //   ...mapState(["isWantEdit"]),
     };
   },
   created() {
     this.getNoteList();
-    this.username = this.$store.state.userName;
+    // this.username = this.$store.state.userData.userName;
+    this.userId = this.$store.state.userId;
+
+    if (this.$store.state.userImg == null) {
+      this.imgUrl = "http://1.15.53.152:9999/img/photo/524.jpg";
+      this.headerImgUrl = "http://1.15.53.152:9999/img/photo/524.jpg";
+    } else {
+      this.headerImgUrl = "http://" + this.$store.state.userImg;
+      this.imgUrl = "http://" + this.$store.state.userImg;
+    }
+
+    // console.log(this.headerImgUrl);
+  },
+  computed: {
+    userName() {
+      return this.$store.state.userData.userName;
+    },
   },
   methods: {
     edit() {
@@ -110,13 +129,66 @@ export default {
     handleChange(file) {
       this.imgUrl = URL.createObjectURL(file.raw);
       this.imgName = file.name;
+      let fd = new FormData();
+      // console.log(typeof file.raw);
+      fd.append("file", file.raw);
+      fd.append("userId", this.userId);
+      // console.log(fd.get("file"));
+      this.FormData = fd;
+      console.log(this.FormData.get("file"));
+      // this.fileList[0] = file;
     },
     beforeUpload() {
       return true;
     },
     concern() {
-      this.$refs.upload.submit();
+      // var userId = this.$store.state.userId;
+      // this.$refs.upload.submit();
+      // console.log(this.fileList);
+      // let fd = new FormData();
+      // fd.append("userId", userId);
+      // fd.append("file", this.fileList[0]);
+      // this.upDataFile(fd);
+      // this.$refs.upload.submit();;
+
+      this.$http({
+        method: "post",
+        url: "/upload/imgUpload",
+        data: this.FormData,
+        headers: { "Content-Type": "multipart/form-data" },
+        // data: { userId: this.userId },
+        // type: "form-data",
+      })
+        .then((res) => {
+          console.log(res);
+          if (res.data.code === 0) {
+            this.$message({ message: "头像上传成功" });
+            this.headerShow = false;
+            if (this.$store.state.userImg == null) {
+              this.headerImgUrl =
+                "http://1.15.53.152:9999/img/photo/" + this.userId + ".jpg";
+            }
+            this.headerImgUrl.replace("t=", "");
+            this.headerImgUrl += "?t=" + Math.random();
+            console.log(this.headerImgUrl);
+            this.$store.commit("updateUserImg", this.headerImgUrl);
+            // this.$router.push({ path: "/user-hub" });
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     },
+    // upDataFile(fileData) {
+    //   this.$http({
+    //     method: "post",
+    //     url: "/upload/imgUpload",
+    //     data: fileData,
+    //     headers: { "Content-Type": "multipart/form-data" },
+    //   }).then((res) => {
+    //     console.log(res);
+    //   });
+    // },
     // loginOut() {
     //   this.$cookies.remove("userId");
     //   this.$router.push({ path: "/welcome" });
@@ -130,10 +202,11 @@ export default {
 <style scoped>
 .content {
   display: flex;
+  align-items: flex-start;
   /* height: 100%; */
 }
 .left_side {
-  margin: 20px 50px;
+  margin: 20px 80px 0 150px;
   padding: 10px 10px;
   width: 300px;
   flex-shrink: 0;
@@ -152,6 +225,10 @@ export default {
   height: 250px;
   margin: auto;
   background-color: rgb(193, 236, 236);
+  border-radius: 50%;
+}
+.head_box img {
+  height: 250px;
   border-radius: 50%;
 }
 .username {
@@ -183,9 +260,10 @@ export default {
   justify-content: center;
   align-content: flex-start;
   margin-right: 12%;
+  margin-top: 20px;
 }
 .note_box {
-  width: 310px;
+  width: 80%;
   /* height: 400px; */
   /* background-color: cadetblue; */
   border: 3px outset rgba(211, 211, 211, 0.5);

@@ -20,7 +20,7 @@ const store = new Vuex.Store({
       state.isAuth = 1
       localStorage.setItem('Token', args.token)
       state.userData = args.data
-      state.userImg = args.data.userPhoto
+      state.userImg = args.data.userPhoto;
       state.userId = args.data.userId
       state.userName = args.data.userName
       console.log('已完成登录')
@@ -30,11 +30,19 @@ const store = new Vuex.Store({
       state.userId = null
       state.userName = null
       state.noteId = null
+      state.userImg=null
       localStorage.setItem("Token","NONE")
       console.log(localStorage.getItem('Token'))
       // console.log(this.$store.state.isAuth)
       console.log('已完成登出')
     },
+    updateUserInfo(state,data){
+      state.userName=data.userName
+      state.userData=data
+    },
+    updateUserImg(state,img){
+      state.userImg=img
+    }
   }
 })
 
