@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-form
-      :model="newUserInfo"
+      :model="newUserInfo1"
       status-icon
       :rules="rules"
       ref="newUserInfo"
@@ -23,7 +23,7 @@
       <el-form-item label="邮箱" prop="userEmail">
         <el-input v-model="newUserInfo1.userEmail"></el-input>
       </el-form-item>
-      <el-form-item label="格言" prop="userMotto">
+      <el-form-item label="简介" prop="userMotto">
         <el-input type="textarea" v-model="newUserInfo1.userMotto"></el-input>
       </el-form-item>
       <el-form-item>

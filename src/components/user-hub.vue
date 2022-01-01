@@ -7,6 +7,20 @@
           <img v-if="headerImgUrl" :src="headerImgUrl" />
         </div>
         <div class="username">{{ userName }}</div>
+        <div v-show="!isWantEdit">
+          <div v-show="showData[0]" class="line"><i class="el-icon-postcard"></i>
+            &emsp;{{ userData.userMotto }}
+          </div>
+          <div v-show="showData[1]" class="line"><i class="el-icon-mobile-phone"></i>
+            &emsp;{{ userData.userPhone }}
+          </div>
+          <div v-show="showData[2]" class="line"><i class="el-icon-message"></i>
+            &emsp;{{ userData.userEmail }}
+          </div>
+          <div v-show="showData[3]" class="line"><i class="el-icon-place"></i>
+            &emsp;{{ userData.userAddr }}
+          </div>
+        </div>
         <div class="edit_box">
           <button
             :class="['edit_btn', isWantEdit ? 'btn_hide' : '']"
@@ -73,35 +87,68 @@ export default {
     return {
       isWantEdit: false,
       userNotes: [],
-      username: "",
       headerShow: false,
-      imgUrl: "",
+      // imgUrl: "",
       imgName: "",
       FormData: null,
       userId: 0,
-      headerImgUrl: "",
+      // headerImgUrl: "",
       //   ...mapState(["isWantEdit"]),
     };
   },
   created() {
     this.getNoteList();
-    // this.username = this.$store.state.userData.userName;
     this.userId = this.$store.state.userId;
-
-    if (this.$store.state.userImg == null) {
-      this.imgUrl = "http://1.15.53.152:9999/img/photo/524.jpg";
-      this.headerImgUrl = "http://1.15.53.152:9999/img/photo/524.jpg";
-    } else {
-      this.headerImgUrl = "http://" + this.$store.state.userImg;
-      this.imgUrl = "http://" + this.$store.state.userImg;
-    }
-
-    // console.log(this.headerImgUrl);
+    console.log('用户主页created');
   },
   computed: {
     userName() {
-      return this.$store.state.userData.userName;
+      return this.$store.state.userName;
     },
+    imgUrl() {
+      let url = null
+      if (this.$store.state.userImg === null) {
+      url = "http://1.15.53.152:9999/img/photo/0.jpg";
+      } else {
+      url = "http://" + this.$store.state.userImg;
+      }
+      return url
+    },
+    headerImgUrl() {
+      let url =null
+      if (this.$store.state.userImg === null) {
+      url = "http://1.15.53.152:9999/img/photo/0.jpg";
+      } else {
+      url = "http://" + this.$store.state.userImg;
+      }
+      return url
+    },
+    userData() {
+      let userData = this.$store.state.userData
+      if (userData !== null) {
+        return this.$store.state.userData
+      } else {
+        return {
+          userMotto : '',
+          userPhone : '',
+          userEmail : '',
+          userAddr : '',  // 解决异步报错问题
+        }
+      }
+    },
+    showData() {
+      let data = this.$store.state.userData
+      if (data !== null) {
+        let b0 = data.userMotto === null || data.userMotto === '' ? false : true
+        let b1 = data.userPhone === null || data.userPhone === '' ? false : true
+        let b2 = data.userEmail === null || data.userEmail === '' ? false : true
+        let b3 = data.userAddr === null || data.userAddr === '' ? false : true
+        let bArr = [b0, b1, b2, b3]
+        return bArr
+      } else {
+        return [false, false ,false ,false] // 解决异步报错问题
+      }
+    }
   },
   methods: {
     edit() {
@@ -295,5 +342,8 @@ export default {
 .img_upload {
   width: 300px;
   max-height: 300px;
+}
+.line{
+  margin: 5px 0px 15px 0px 
 }
 </style>
