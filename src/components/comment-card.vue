@@ -6,15 +6,24 @@
           <img :src="userImg" alt="" />
         </div>
         <div class="info_box">
+          <span
+            v-if="userId === comment.userId"
+            class="del"
+            @click.stop="delCom"
+            ><el-icon class="el-icon-delete"></el-icon
+          ></span>
           <span class="username">{{ comment.userName }}</span>
+
           <span>{{ comment.commentCreateTime }}</span>
         </div>
       </header>
       <main>{{ comment.commentText }}</main>
       <footer>
         <span @click.stop="give_a_subcomment"
-          ><i class="el-icon-chat-dot-round"></i
-        ></span>
+          ><i class="el-icon-chat-dot-round"></i>&nbsp;{{
+            comment.subCommentNum ? comment.subCommentNum : ""
+          }}</span
+        >
         <span @click.stop="give_a_like">
           <Icon type="ios-heart-outline" size="20" v-if="!isLike" />
           <Icon type="ios-heart" size="20" color="lightPink" v-if="isLike" />
@@ -34,11 +43,12 @@ export default {
       flag: false,
       isLike: false,
       userImg: "",
+      userId: 0,
     };
   },
   created() {
     if (this.comment.userPhoto == null) {
-      this.userImg = "http://1.15.53.152:9999/img/photo/524.jpg";
+      this.userImg = "http://1.15.53.152:9999/img/photo/0.jpg";
     } else {
       this.userImg = "http://" + this.comment.userPhoto;
     }
@@ -50,6 +60,7 @@ export default {
   mounted() {
     // console.log(this.comment);
     this.formatDate(this.comment.commentCreateTime);
+    this.userId = this.$store.state.userId;
   },
   methods: {
     give_a_like() {
@@ -127,7 +138,15 @@ export default {
       // console.log(date);
       // var time = date.split("T");
       // console.log(time);
-      this.comment.commentCreateTime = date.split("T")[0];
+      // console.log(this.comment.commentCreateTime);
+      if (this.comment.commentCreateTime != null) {
+        this.comment.commentCreateTime = date.split("T")[0];
+      }
+    },
+    delCom() {
+      let commentId = this.comment.commentId;
+      let preComId = this.comment.preCommentId;
+      this.$emit("wantDel", commentId, preComId);
     },
     // formatText() {},
   },
@@ -178,6 +197,11 @@ header .img_box img {
   font-size: 25px;
   color: black;
   margin-bottom: 10px;
+}
+.info_box .del {
+  margin-top: 10px;
+  margin-right: 10px;
+  float: right;
 }
 .box main {
   margin-bottom: 10px;

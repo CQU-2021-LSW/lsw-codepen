@@ -10,25 +10,49 @@
           <span>{{ comment.commentCreateTime }}</span>
         </div>
       </header>
+      <div class="del-dialog" v-if="delIsShow">
+        <del-dialog
+          :clikedId="wantDelId"
+          :preId="preComId"
+          @deled="deledCom"
+          @cancelDel="cancel"
+        ></del-dialog>
+      </div>
       <main>
         <div class="mainContent">{{ comment.commentText }}</div>
         <div class="subComments">
           <header>
-            <span>评论</span
+            <span
+              >评论&nbsp;&nbsp;{{
+                comment.subCommentNum ? comment.subCommentNum : ""
+              }}</span
             ><span>点赞&nbsp;&nbsp;{{ likeCount ? likeCount : "" }}</span>
           </header>
-          <div
-            class="subCommentBox"
-            v-for="(item, idx) in subComments"
-            :key="idx"
-          >
-            <sub-comment :subComment="item"></sub-comment>
+          <div v-if="comment.subCommentNum === 0" class="empty">
+            还没有人评论噢~
+          </div>
+          <div v-else>
+            <div
+              class="subCommentBox"
+              v-for="(item, idx) in subComments"
+              :key="idx"
+            >
+              <sub-comment
+                :subComment="item"
+                :fatherComId="comment.userId"
+                @wantDel="wantDelCom"
+              ></sub-comment>
+            </div>
           </div>
         </div>
       </main>
     </div>
     <div id="dialog" v-if="isShow">
-      <my-dialog :clickedId="beClickedId"></my-dialog>
+      <my-dialog
+        :clickedId="beClickedId"
+        @added="changeSubNum"
+        @cancelAdd="cancel"
+      ></my-dialog>
     </div>
     <footer>
       <span @click.stop="give_a_subcomment"
@@ -38,7 +62,7 @@
         <Icon type="ios-heart-outline" size="20" v-if="!isLike" />
         <Icon type="ios-heart" size="20" color="lightPink" v-if="isLike" />
 
-        &nbsp;{{ likeCount ? likeCount : "" }}</span
+        &nbsp;赞</span
       >
     </footer>
   </div>
@@ -46,6 +70,7 @@
 <script>
 import subComment from "./subComment.vue";
 import myDialog from "./myDialog.vue";
+import delDialog from "./del-dialog.vue";
 export default {
   name: "comment-card",
   data() {
@@ -58,19 +83,33 @@ export default {
       likeCount: 0,
       isShow: false,
       beClickedId: 0,
+      userId: null,
+      delIsShow: false,
+      wantDelId: 0,
+      preComId: 0,
+      // length: 0,
     };
   },
-  components: { subComment, myDialog },
+  components: { subComment, myDialog, delDialog },
   created() {
     if (this.$store.state.commentInfo == null) {
       console.log(2222);
       // console.log(localStorage.getItem("commentInfo"));
       this.comment = JSON.parse(localStorage.getItem("commentInfo"));
-      // console.log(this.comment);
+      // if (localStorage.subCommentNum != null) {
+      //   this.comment.subCommentNum = localStorage.getItem("subNum");
+      // }
+
+      console.log(this.comment.subCommentNum);
     } else {
       console.log(33333);
       this.comment = this.$store.state.commentInfo;
     }
+    this.getSubSomments();
+    this.userId = this.$cookies.get("userId");
+    this.preComId = this.comment.commentId;
+    console.log(this.userId);
+    // console.log(this.$store.state.userId);
   },
   mounted() {
     if (this.comment.userPhoto == null) {
@@ -84,9 +123,10 @@ export default {
 
     console.log(!!this.isLike);
     this.likeCount = this.comment.likeCount;
+    // console.log(this.subComments);
     // console.log(!!this.isLike);
-    this.getSubSomments();
-    // console.log(this.comment);
+
+    // console.log(this.comment.subCommentNum);
     // this.formatDate(this.comment.commentCreateTime);
   },
   // updated() {
@@ -110,7 +150,8 @@ export default {
         params: data,
       }).then((res) => {
         this.subComments = res.data.data;
-        // console.log(this.subComments);
+        // this.lenth = this.subComments.length;
+        // console.log(this.subComments.length);
         // console.log(res.data.data);
       });
     },
@@ -177,6 +218,16 @@ export default {
       this.isShow = true;
       // console.log(245121);
     },
+    changeSubNum() {
+      console.log("加了");
+      this.comment.subCommentNum++;
+      localStorage.setItem("commentInfo", JSON.stringify(this.comment));
+    },
+    deledCom() {
+      console.log("deled");
+      this.comment.subCommentNum--;
+      localStorage.setItem("commentInfo", JSON.stringify(this.comment));
+    },
     // toSpecifyComment() {
     //   this.$store.commit("getCommentId", this.comment);
     //   this.$router.push({ path: "/specifyComment" });
@@ -187,6 +238,16 @@ export default {
       // var time = date.split("T");
       // console.log(time);
       this.comment.commentCreateTime = date.split("T")[0];
+    },
+    cancel() {
+      console.log("取消了");
+      this.isShow = false;
+      this.delIsShow = false;
+    },
+    wantDelCom(commentId) {
+      this.delIsShow = true;
+      this.wantDelId = commentId;
+      console.log(this.wantDelId);
     },
     // formatText() {},
   },
@@ -256,6 +317,11 @@ h4 {
   color: black;
   margin-bottom: 10px;
 }
+.info_box .del {
+  margin-top: 20px;
+  margin-right: 50px;
+  float: right;
+}
 .box main {
   /* flex: 1; */
   height: 80%;
@@ -292,6 +358,10 @@ h4 {
   display: flex;
   justify-content: space-around;
   margin-bottom: 30px;
+}
+.subComments .empty {
+  text-align: center;
+  height: 100px;
 }
 .subComments > .subCommentBox {
   margin-top: 20px;

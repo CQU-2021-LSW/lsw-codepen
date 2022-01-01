@@ -1,6 +1,11 @@
 <template>
   <div class="myDialog">
-    <el-dialog title="发表评论" width="600px" :visible.sync="visible">
+    <el-dialog
+      title="发表评论"
+      width="600px"
+      :visible.sync="visible"
+      @close="addCancel"
+    >
       <el-input type="textarea" :rows="15" v-model="textarea">{{
         textarea
       }}</el-input>
@@ -24,7 +29,7 @@
         ></el-upload> -->
       </div>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="visible = false" class="cancel">Cancel</el-button>
+        <el-button @click="addCancel" class="cancel">Cancel</el-button>
         <el-button @click="uploadComment" class="confirm">Confirm</el-button>
       </span>
     </el-dialog>
@@ -45,49 +50,66 @@ export default {
     };
   },
   methods: {
-    getCommentList() {
-      // console.log(this.$store.state.userId);
-      // console.log(1111);
-      if (this.$cookies.get("userId") == null) {
-        this.$http({
-          method: "get",
-          url: "/comments/getCommentList",
-        }).then(({ data }) => {
-          if (data.code === 0) {
-            console.log(data);
-            this.commentsData = data.data.reverse();
-          } else {
-            this.$message({
-              message: "未知异常，请稍后再试~",
-              type: "warning",
-            });
-          }
-        });
-      } else {
-        // console.log(this.$store.state.userId);
-        this.$http({
-          method: "get",
-          url: "/comments/getCommentList",
-          params: { userId: this.$cookies.get("userId") },
-        }).then(({ data }) => {
-          if (data.code === 0) {
-            console.log(data);
-            this.commentsData = data.data.reverse();
-          } else {
-            this.$message({
-              message: "未知异常，请稍后再试~",
-              type: "warning",
-            });
-          }
-        });
-      }
-    },
+    // getCommentList() {
+    //   if (this.$cookies.get("userId") == null) {
+    //     this.$http({
+    //       method: "get",
+    //       url: "/comments/getCommentList",
+    //     }).then(({ data }) => {
+    //       if (data.code === 0) {
+    //         console.log(data);
+    //         this.commentsData = data.data.reverse();
+    //       } else {
+    //         this.$message({
+    //           message: "未知异常，请稍后再试~",
+    //           type: "warning",
+    //         });
+    //       }
+    //     });
+    //   } else {
+    //     this.$http({
+    //       method: "get",
+    //       url: "/comments/getCommentList",
+    //       params: { userId: this.$cookies.get("userId") },
+    //     }).then(({ data }) => {
+    //       if (data.code === 0) {
+    //         console.log(data);
+    //         this.commentsData = data.data.reverse();
+    //       } else {
+    //         this.$message({
+    //           message: "未知异常，请稍后再试~",
+    //           type: "warning",
+    //         });
+    //       }
+    //     });
+    //   }
+    // },
+    // getSubSomments() {
+    //   let data;
+    //   if (this.$store.state.userId == null) {
+    //     data = { commentId: this.comment.commentId };
+    //   } else {
+    //     data = {
+    //       commentId: this.comment.commentId,
+    //       userId: this.$store.state.userId,
+    //     };
+    //   }
+    //   this.$http({
+    //     method: "get",
+    //     url: "/comments/getSubComment",
+    //     params: data,
+    //   }).then((res) => {
+    //     this.subComments = res.data.data;
+    //   });
+    // },
     uploadComment() {
       if (this.textarea.length == 0) {
         this.$message({ message: "没有内容Ψ(￣∀￣)Ψ" });
         return;
       }
       if (this.$store.state.userId != null) {
+        let _this = this;
+
         this.$http({
           method: "post",
           url: "/comments/uploadComment",
@@ -99,7 +121,15 @@ export default {
         }).then(({ data }) => {
           console.log(data);
           this.$message({ message: "发表成功" });
-          this.getCommentList();
+          if (_this.clickedId !== 0) {
+            this.$emit("added");
+          }
+          // if(this.clickedId===0){
+          //   this.getCommentList();
+          // }else{
+          //   this.getSubSomments()
+          // }
+
           location.reload();
           this.textarea = "";
           this.textMap.clear();
@@ -139,6 +169,9 @@ export default {
       for (const text of this.textMap) {
         this.textarea += text + "\r\n";
       }
+    },
+    addCancel() {
+      this.$emit("cancelAdd");
     },
   },
 };

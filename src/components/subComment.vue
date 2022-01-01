@@ -8,6 +8,12 @@
       </div>
       <main>
         <div class="info_box">
+          <span
+            class="del"
+            v-if="userId == subComment.userId || userId === fatherComId"
+            @click.stop="delCom"
+            ><el-icon class="el-icon-delete"></el-icon
+          ></span>
           <span class="username">{{ subComment.userName }}</span>
           <span>{{ subComment.commentText }}</span>
         </div>
@@ -20,18 +26,23 @@
 <script>
 export default {
   name: "subComment",
-  props: ["subComment"],
+  props: ["subComment", "fatherComId"],
   data() {
     return {
       userImg: "",
+      userId: null,
     };
   },
-  created() {},
+  created() {
+    this.userId = this.$cookies.get("userId");
+    // console.log(this.subComment);
+    console.log(this.fatherComId);
+  },
   mounted() {
     this.formatDate(this.subComment.commentCreateTime);
     // console.log(this.subComment);
     if (this.subComment.userPhoto == null) {
-      this.userImg = "http://1.15.53.152:9999/img/photo/524.jpg";
+      this.userImg = "http://1.15.53.152:9999/img/photo/0.jpg";
     } else {
       this.userImg = "http://" + this.subComment.userPhoto;
     }
@@ -43,6 +54,10 @@ export default {
       // var time = date.split("T");
       // console.log(time);
       this.subComment.commentCreateTime = date.split("T")[0];
+    },
+    delCom() {
+      let commentId = this.subComment.commentId;
+      this.$emit("wantDel", commentId);
     },
   },
 };
@@ -77,7 +92,7 @@ export default {
   border-radius: 50%;
 }
 .box main {
-  /* flex: 1; */
+  flex: 1;
   margin-left: 15px;
   /* background-color: lightcoral; */
 }
@@ -92,6 +107,11 @@ export default {
   font-size: 15px;
   color: black;
   /* margin-bottom: 10px; */
+}
+.info_box .del {
+  margin-top: 20px;
+  margin-right: 50px;
+  float: right;
 }
 .box main {
   margin-bottom: 10px;

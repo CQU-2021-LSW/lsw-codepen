@@ -5,11 +5,22 @@
         <span @click="addNew"><i class="el-icon-edit-outline"></i> </span>
       </header>
       <div class="box" v-for="(item, idx) in commentsData" :key="idx">
-        <comment-card :comment="item" @wantAdd="beClicked"></comment-card>
+        <comment-card
+          :comment="item"
+          @wantAdd="beClicked"
+          @wantDel="wantDelCom"
+        ></comment-card>
       </div>
     </div>
     <div id="dialog" v-if="isShow">
-      <my-dialog :clickedId="beClickedId"></my-dialog>
+      <my-dialog :clickedId="beClickedId" @cancelAdd="cancel"></my-dialog>
+    </div>
+    <div id="delDialog" v-if="delIsShow">
+      <del-dialog
+        :clikedId="wantDelId"
+        @cancelDel="cancel"
+        :preId="preComId"
+      ></del-dialog>
     </div>
     <!-- <el-dialog title="发表评论" :visible.sync="isShow" width="600px">
       <el-input type="textarea" :rows="15" v-model="textarea">{{
@@ -45,6 +56,7 @@
 <script>
 import commentCard from "./comment-card.vue";
 import myDialog from "./myDialog.vue";
+import delDialog from "./del-dialog.vue";
 export default {
   data() {
     return {
@@ -56,6 +68,9 @@ export default {
       // textMap: new Map(),
       // list: [],
       beClickedId: 0,
+      delIsShow: false,
+      wantDelId: 0,
+      preComId: 0,
     };
   },
   methods: {
@@ -173,6 +188,16 @@ export default {
       this.beClickedId = commentId;
       this.isShow = true;
     },
+    wantDelCom(commentId, preComId) {
+      this.wantDelId = commentId;
+      this.preComId = preComId;
+      this.delIsShow = true;
+    },
+    cancel() {
+      // console.log("取消");
+      this.isShow = false;
+      this.delIsShow = false;
+    },
   },
   mounted() {
     this.getCommentList();
@@ -181,16 +206,22 @@ export default {
     console.log(11111);
     // this.getCommentList();
   },
-  components: { commentCard, myDialog },
+  components: { commentCard, myDialog, delDialog },
 };
 </script>
 
 <style scoped>
+span:hover {
+  cursor: default;
+}
 #dialog {
   position: absolute;
   display: block;
 }
-
+#delDialog {
+  position: absolute;
+  display: block;
+}
 .container {
   border: 3px dashed lightpink;
   border-radius: 10px;
