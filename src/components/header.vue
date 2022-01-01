@@ -10,7 +10,7 @@
       </el-menu-item>
       <el-submenu v-else id="r1" index="null">
         <template slot="title">
-          <img :src="userImg" />&emsp;{{ userName }}
+          <img :src="userImg" class="headerImg" />&emsp;{{ userName }}
         </template>
         <el-menu-item index="/user-hub">个人主页</el-menu-item>
         <el-menu-item index="/findBackPwd">修改密码</el-menu-item>
@@ -77,5 +77,11 @@ img {
   height: auto;
   max-width: 90%;
   max-height: 90%;
+  /* border-radius: 50; */
+}
+.headerImg {
+  width: 55px;
+  height: 60px;
+  /* border-radius: 50%; */
 }
 </style>
