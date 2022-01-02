@@ -3,8 +3,8 @@
     <div class="left_side">
       <!-- <button @click="loginOut">登出</button> -->
       <div class="info_box">
-        <div class="head_box" @click="headerShow = true">
-          <img v-if="headerImgUrl" :src="headerImgUrl" />
+        <div class="head_box" @click="editAva">
+          <img :src="storeImgUrl" />
         </div>
         <div class="username">{{ userName }}</div>
         <div v-show="!isWantEdit">
@@ -88,11 +88,11 @@ export default {
       isWantEdit: false,
       userNotes: [],
       headerShow: false,
-      // imgUrl: "",
+      imgUrl: "",
       imgName: "",
       FormData: null,
-      userId: 0,
-      // headerImgUrl: "",
+      // userId: 0,
+      headerImgUrl: "",
       //   ...mapState(["isWantEdit"]),
     };
   },
@@ -105,7 +105,7 @@ export default {
     userName() {
       return this.$store.state.userName;
     },
-    imgUrl() {
+    /*imgUrl() {
       let url = null
       if (this.$store.state.userImg === null) {
       url = "http://1.15.53.152:9999/img/photo/0.jpg";
@@ -113,8 +113,8 @@ export default {
       url = "http://" + this.$store.state.userImg;
       }
       return url
-    },
-    headerImgUrl() {
+    },*/
+    storeImgUrl() {
       let url =null
       if (this.$store.state.userImg === null) {
       url = "http://1.15.53.152:9999/img/photo/0.jpg";
@@ -151,6 +151,9 @@ export default {
     }
   },
   methods: {
+    editAva() {
+      this.headerShow = true
+    },
     edit() {
       this.isWantEdit = true;
     },
@@ -179,7 +182,7 @@ export default {
       let fd = new FormData();
       // console.log(typeof file.raw);
       fd.append("file", file.raw);
-      fd.append("userId", this.userId);
+      fd.append("userId", this.$store.state.userId);
       // console.log(fd.get("file"));
       this.FormData = fd;
       console.log(this.FormData.get("file"));
@@ -213,7 +216,7 @@ export default {
             this.headerShow = false;
             if (this.$store.state.userImg == null) {
               this.headerImgUrl =
-                "http://1.15.53.152:9999/img/photo/" + this.userId + ".jpg";
+                "http://1.15.53.152:9999/img/photo/" + this.$store.state.userId + ".jpg";
             }
             this.headerImgUrl.replace("t=", "");
             this.headerImgUrl += "?t=" + Math.random();
