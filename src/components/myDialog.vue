@@ -123,6 +123,8 @@ export default {
           this.$message({ message: "发表成功" });
           if (_this.clickedId !== 0) {
             this.$emit("added");
+          } else {
+            this.$emit("addedNew");
           }
           // if(this.clickedId===0){
           //   this.getCommentList();
@@ -130,7 +132,7 @@ export default {
           //   this.getSubSomments()
           // }
 
-          location.reload();
+          // location.reload();
           this.textarea = "";
           this.textMap.clear();
           this.list = [];

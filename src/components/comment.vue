@@ -9,6 +9,7 @@
           :comment="item"
           @wantAdd="beClicked"
           @wantDel="wantDelCom"
+          @addedNew="addedOne"
         ></comment-card>
       </div>
     </div>
@@ -197,6 +198,9 @@ export default {
       // console.log("取消");
       this.isShow = false;
       this.delIsShow = false;
+    },
+    addedOne() {
+      this.getCommentList();
     },
   },
   mounted() {

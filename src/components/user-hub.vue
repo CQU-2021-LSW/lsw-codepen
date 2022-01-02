@@ -34,7 +34,7 @@
     </div>
     <div class="mainBox">
       <div class="note_box" v-for="(i, idx) in userNotes" :key="idx">
-        <my-note :note="i" :idx="idx"></my-note>
+        <my-note :note="i" :idx="idx" @deleted="delNote"></my-note>
       </div>
     </div>
     <button @click="addfile" class="add_btn">新建项目</button>
@@ -165,7 +165,7 @@ export default {
       this.$http
         .get("notes/noteList", {
           params: {
-            userId: this.$store.state.userId,
+            userId: this.$cookies.get("userId"),
           },
         })
         .then(({ data }) => {
@@ -243,6 +243,10 @@ export default {
     //   this.$cookies.remove("userId");
     //   this.$router.push({ path: "/welcome" });
     // },
+    delNote() {
+      console.log("已删除");
+      this.getNoteList();
+    },
   },
 
   components: { userInfo, myNote },

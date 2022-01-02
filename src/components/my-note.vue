@@ -1,7 +1,18 @@
 <template>
   <div class="container" :note="note" :key="idx" @click="edit(note)">
     <!-- <div class="contentBox">123</div> -->
+    <span class="del" @click.stop="wantDel"
+      ><el-icon class="el-icon-delete"></el-icon
+    ></span>
     <h4>{{ note.noteName }}</h4>
+
+    <el-dialog :visible.sync="isShow" width="30%">
+      <span>确认删除？</span>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="isShow = false" class="cancel">Cancel</el-button>
+        <el-button @click="confirmDel" class="confirm">Confirm</el-button>
+      </span>
+    </el-dialog>
     <footer>
       <!-- <h4>{{ note.noteName }}</h4> -->
       <div class="tag">
@@ -18,10 +29,15 @@
 export default {
   name: "my-note",
   props: ["idx", "note"],
+  data() {
+    return {
+      isShow: false,
+    };
+  },
   methods: {
     edit(note) {
       this.$store.state.noteId = note.noteId;
-      this.$router.push({ path: "/editor/" + note.noteName });
+      // this.$router.push({ path: "/editor/" + note.noteName });
       // console.log(note);
     },
     formatDate(date) {
@@ -30,6 +46,24 @@ export default {
       var time = date.split("T");
       // console.log(time);
       this.note.noteCreateTime = time[0] + "    " + time[1];
+    },
+    wantDel() {
+      // console.log("?????");
+      this.isShow = true;
+    },
+    confirmDel() {
+      console.log(this.note.noteId);
+      this.$http({
+        method: "post",
+        url: "/notes/deleteNote",
+        data: { noteIds: [this.note.noteId] },
+      }).then((res) => {
+        console.log(res);
+        this.$emit("deleted");
+        this.isShow = false;
+        // location.reload();
+      });
+      // console.log("？？？？");
     },
   },
   mounted() {
@@ -43,6 +77,11 @@ h4 {
   font-size: 30px;
   padding: 20px 0;
   /* white-space: pre; */
+}
+.del {
+  margin-right: 30px;
+  margin-top: 30px;
+  float: right;
 }
 .contentBox {
   /* display: block; */
