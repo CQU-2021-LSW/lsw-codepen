@@ -132,7 +132,7 @@ export default {
           //   this.getSubSomments()
           // }
 
-          // location.reload();
+          location.reload();
           this.textarea = "";
           this.textMap.clear();
           this.list = [];

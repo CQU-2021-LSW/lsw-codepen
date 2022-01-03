@@ -37,7 +37,7 @@ export default {
   methods: {
     edit(note) {
       this.$store.state.noteId = note.noteId;
-      // this.$router.push({ path: "/editor/" + note.noteName });
+      this.$router.push({ path: "/editor/" + note.noteName });
       // console.log(note);
     },
     formatDate(date) {

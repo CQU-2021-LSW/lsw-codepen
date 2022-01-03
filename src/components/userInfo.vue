@@ -11,8 +11,15 @@
       <el-form-item label="用户名" prop="userName">
         <el-input v-model="newUserInfo1.userName"></el-input>
       </el-form-item>
-      <el-form-item label="性别" prop="userGender">
+      <!-- <el-form-item label="性别" prop="userGender">
         <el-input v-model="newUserInfo1.userGender"></el-input>
+      </el-form-item> -->
+      <el-form-item label="性别" prop="userGender">
+        <el-radio-group v-model="newUserInfo1.userGender">
+          <el-radio :label="0">神秘</el-radio>
+          <el-radio :label="1"><i class="el-icon-male"></i></el-radio>
+          <el-radio :label="2"><i class="el-icon-female"></i></el-radio>
+        </el-radio-group>
       </el-form-item>
       <el-form-item label="手机号" prop="userPhone">
         <el-input v-model.number="newUserInfo1.userPhone"></el-input>
@@ -137,6 +144,7 @@ export default {
     //   console.log("changing");
     // },
     update() {
+      console.log(this.newUserInfo1.userGender);
       var tableUser = this.newUserInfo1;
       tableUser = Object.assign({}, tableUser, {
         userId: this.$store.state.userId,
@@ -149,7 +157,7 @@ export default {
         url: "/user/update",
         data: tableUser,
       }).then(({ data }) => {
-        // console.log(data.code);
+        console.log(data);
         if (data && data.code === 0) {
           // console.log(data);
           // this.getUserInfo();
@@ -163,7 +171,7 @@ export default {
           this.$emit("cancelUpdate");
         } else {
           this.$message({
-            message: "修改失败(∪.∪ )...zzz用户名or手机号重复",
+            message: "输入信息有误，修改失败",
             type: "warning",
           });
         }

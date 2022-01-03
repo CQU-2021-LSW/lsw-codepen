@@ -50,7 +50,11 @@ export default {
     if (this.comment.userPhoto == null) {
       this.userImg = "http://1.15.53.152:9999/img/photo/0.jpg";
     } else {
-      this.userImg = "http://" + this.comment.userPhoto;
+      this.userImg =
+        "http://" +
+        this.comment.userPhoto.split("?")[0] +
+        "?t=" +
+        Math.random();
     }
     this.isLike = this.comment.liked;
     localStorage.setItem("commentInfo", this.comment);

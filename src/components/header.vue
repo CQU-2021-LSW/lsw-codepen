@@ -51,9 +51,16 @@ export default {
       } else {
         if (this.$store.state.userImg.indexOf("http") != -1) {
           console.log(this.$store.state.userImg);
-          return this.$store.state.userImg;
+          return (
+            this.$store.state.userImg.split("?")[0] + "?t=" + Math.random()
+          );
         } else {
-          return "http://" + this.$store.state.userImg;
+          return (
+            "http://" +
+            this.$store.state.userImg.split("?")[0] +
+            "?t=" +
+            Math.random()
+          );
         }
       }
     },
