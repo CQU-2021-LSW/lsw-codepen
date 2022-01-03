@@ -71,7 +71,7 @@
         ></i>
       </el-upload>
       <span slot="footer" class="dialog-footer">
-        <el-button>Cancel</el-button>
+        <el-button @click="headerShow = false">Cancel</el-button>
         <el-button type="primary" @click="concern">Confirm</el-button>
       </span>
     </el-dialog>
@@ -94,6 +94,7 @@ export default {
       FormData: null,
       userId: 0,
       headerImgUrl: "",
+      picType: "",
 
       //   ...mapState(["isWantEdit"]),
     };
@@ -225,14 +226,21 @@ export default {
     handleChange(file) {
       this.imgUrl = URL.createObjectURL(file.raw);
       this.imgName = file.name;
-      let fd = new FormData();
-      // console.log(typeof file.raw);
-      fd.append("file", file.raw);
-      fd.append("userId", this.userId);
-      // console.log(fd.get("file"));
-      this.FormData = fd;
-      console.log(this.FormData.get("file"));
-      // this.fileList[0] = file;
+      this.picType = "." + file.name.split(".")[1];
+      var str = "(.jpg|.png|.jpeg|.bmp)";
+      var reg = new RegExp(str);
+      if (reg.test(this.imgName)) {
+        let fd = new FormData();
+        console.log(this.picType);
+        fd.append("file", file.raw);
+        fd.append("userId", this.userId);
+        // console.log(fd.get("file"));
+        this.FormData = fd;
+        console.log(this.FormData.get("file"));
+        // this.fileList[0] = file;
+      } else {
+        this.$message({ message: "暂不支持该格式文件请重新选择文件" });
+      }
     },
     beforeUpload() {
       return true;
@@ -247,7 +255,7 @@ export default {
       // fd.append("file", this.fileList[0]);
       // this.upDataFile(fd);
       // this.$refs.upload.submit();;
-
+      let _this = this;
       this.$http({
         method: "post",
         url: "/upload/imgUpload",
@@ -265,9 +273,17 @@ export default {
             // url = null;
             if (this.$store.state.userImg == null) {
               this.headerImgUrl =
-                "http://1.15.53.152:9999/img/photo/" + this.userId + ".jpg";
+                "http://1.15.53.152:9999/img/photo/" +
+                this.userId +
+                _this.picType;
             }
-            this.headerImgUrl.replace("?t=", "");
+            console.log(this.headerImgUrl);
+
+            this.headerImgUrl = this.headerImgUrl.split("?t=")[0];
+            var index = this.headerImgUrl.lastIndexOf(".");
+            this.headerImgUrl =
+              this.headerImgUrl.slice(0, index) + _this.picType;
+            console.log(this.headerImgUrl);
             // newImg.replace("t=")
             this.headerImgUrl += "?t=" + Math.random();
             console.log(this.headerImgUrl);

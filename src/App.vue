@@ -18,30 +18,30 @@ export default {
   },
   methods: {
     loginState() {
-      if (this.$cookies.isKey('userId')) {
+      if (this.$cookies.isKey("userId")) {
         this.$http
-        .get("user/userInfo", {
-          params: {
-            userId: this.$cookies.get('userId'),
-          },
-        })
-        .then(({ data }) => {
-          console.log(data.data);
-          if (data.code === 0) {
-            let token = localStorage.getItem('Token')
-            let args = {
-              data: data.data,
-              token: token,
+          .get("user/userInfo", {
+            params: {
+              userId: this.$cookies.get("userId"),
+            },
+          })
+          .then(({ data }) => {
+            console.log(data.data);
+            if (data.code === 0) {
+              let token = localStorage.getItem("Token");
+              let args = {
+                data: data.data,
+                token: token,
+              };
+              this.$store.commit("auth", args);
+            } else {
+              console.log("自动登陆失败");
             }
-            this.$store.commit('auth', args)
-          } else {
-            console.log('自动登陆失败')
-          }
-        })
-        .catch(({ error }) => {
-          console.log("err")
-          console.log(error)
-        });
+          })
+          .catch(({ error }) => {
+            console.log("err");
+            console.log(error);
+          });
       }
     },
   },
