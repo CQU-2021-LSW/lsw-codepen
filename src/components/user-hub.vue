@@ -98,7 +98,7 @@ export default {
   },
   created() {
     this.getNoteList();
-    this.userId = this.$store.state.userId;
+    // this.userId = this.$store.state.userId;
     console.log('用户主页created');
   },
   computed: {
@@ -119,7 +119,11 @@ export default {
       if (this.$store.state.userImg === null) {
       url = "http://1.15.53.152:9999/img/photo/0.jpg";
       } else {
-      url = "http://" + this.$store.state.userImg;
+        if (this.$store.state.userImg.indexOf("http") === -1) {
+          url = "http://" + this.$store.state.userImg;
+        } else {
+          url = this.$store.state.userImg
+        }
       }
       return url
     },
@@ -152,6 +156,19 @@ export default {
   },
   methods: {
     editAva() {
+      if (this.$store.state.userImg == null) {
+      this.imgUrl = "http://1.15.53.152:9999/img/photo/0.jpg";
+      this.headerImgUrl = "http://1.15.53.152:9999/img/photo/0.jpg";
+      } else {
+        if (this.$store.state.userImg.indexOf("http") != -1) {
+          console.log(this.$store.state.userImg);
+          this.headerImgUrl = this.$store.state.userImg;
+          this.imgUrl = this.$store.state.userImg;
+        } else {
+          this.headerImgUrl = "http://" + this.$store.state.userImg;
+          this.imgUrl = "http://" + this.$store.state.userImg;
+        }
+      }
       this.headerShow = true
     },
     edit() {

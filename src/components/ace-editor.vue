@@ -283,7 +283,7 @@ export default {
       var text = this.getAllText()
       var JSContent = text.JSContent
       // 将console.log的值保存
-      var consoleLogHelper =
+      /*var consoleLogHelper =
         `var consoleLogData = [];\n` +
         `console.log = function (message) {
         if (typeof message == 'object') {
@@ -299,8 +299,8 @@ export default {
         params: {
           success: true, 
           data: consoleLogData
-        }});`
-      var resultJS = consoleLogHelper + JSContent + cmdHelper
+        }});`*/
+      var resultJS = JSContent// + consoleLogHelper +  cmdHelper
       // var code = this.getCode()
       var HTMLContent = text.HTMLContent
       var CSSContent = text.CSSContent
