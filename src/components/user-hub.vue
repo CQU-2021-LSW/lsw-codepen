@@ -3,8 +3,8 @@
     <div class="left_side">
       <!-- <button @click="loginOut">登出</button> -->
       <div class="info_box">
-        <div class="head_box" @click="headerShow = true">
-          <img v-if="headerImgUrl" :src="headerImgUrl" />
+        <div class="head_box" @click="editAva">
+          <img :src="storeImgUrl" />
         </div>
         <div class="username">{{ userName }}</div>
         <div v-show="!isWantEdit">
@@ -85,43 +85,59 @@ export default {
   name: "user-hub",
   data() {
     return {
+      isEidtAva: false,
       isWantEdit: false,
       userNotes: [],
       headerShow: false,
-      // imgUrl: "",
+      imgUrl: "",
       imgName: "",
       FormData: null,
       userId: 0,
-      // headerImgUrl: "",
+      headerImgUrl: "",
+
       //   ...mapState(["isWantEdit"]),
     };
   },
   created() {
+    // if(this.$cookies.get(''))
     this.getNoteList();
-    this.userId = this.$store.state.userId;
+    // this.userId = this.$store.state.userId;
+    // if (this.$store.state.userImg !== null) {
+    // this.imgUrl = "http://" + this.$store.state.userImg;
+    // this.headerImgUrl = "http://" + this.$store.state.userImg;
+    //  this.$store.commit("updateUserImg", this.headerImgUrl);
+    // } else {
+    // this.imgUrl = "http://1.15.53.152:9999/img/photo/0.jpg";
+    // this.headerImgUrl = "http://1.15.53.152:9999/img/photo/0.jpg";
+    //  this.$store.commit("updateUserImg", this.headerImgUrl);
+    // }
     console.log("用户主页created");
   },
   computed: {
     userName() {
       return this.$store.state.userName;
     },
-    imgUrl() {
+    // imgUrl() {
+    //   let url = null;
+    //   if (this.$store.state.userImg === null) {
+    //     url = "http://1.15.53.152:9999/img/photo/0.jpg";
+    //   } else {
+    //     url = "http://" + this.$store.state.userImg;
+    //   }
+    //   return url;
+    // },
+    storeImgUrl() {
       let url = null;
       if (this.$store.state.userImg === null) {
         url = "http://1.15.53.152:9999/img/photo/0.jpg";
       } else {
-        url = "http://" + this.$store.state.userImg;
+        if (this.$store.state.userImg.indexOf("http") != -1) {
+          url = this.$store.state.userImg.split("?")[0];
+        } else {
+          url = "http://" + this.$store.state.userImg.split("?")[0];
+        }
       }
-      return url;
-    },
-    headerImgUrl() {
-      let url = null;
-      if (this.$store.state.userImg === null) {
-        url = "http://1.15.53.152:9999/img/photo/0.jpg";
-      } else {
-        url = "http://" + this.$store.state.userImg;
-      }
-      return url;
+      return url + "?t=" + Math.random();
     },
     userData() {
       let userData = this.$store.state.userData;
@@ -154,6 +170,30 @@ export default {
     },
   },
   methods: {
+    editAva() {
+      this.headerShow = true;
+      this.isEidtAva = true;
+      // this.imgUrl = this.$store.state.userImg;
+      this.userId = this.$store.state.userId;
+      if (this.$store.state.userImg !== null) {
+        if (this.$store.state.userImg.indexOf("http") != -1) {
+          this.imgUrl =
+            this.$store.state.userImg.split("?")[0] + "?t=" + Math.random();
+          this.headerImgUrl = this.$store.state.userImg;
+        } else {
+          this.imgUrl =
+            "http://" +
+            this.$store.state.userImg.split("?")[0] +
+            "?t=" +
+            Math.random();
+          this.headerImgUrl = "http://" + this.$store.state.userImg;
+        }
+      } else {
+        this.imgUrl = "http://1.15.53.152:9999/img/photo/0.jpg";
+        this.headerImgUrl = "http://1.15.53.152:9999/img/photo/0.jpg";
+      }
+      // this.$store.commit("updateUserImg", this.headerImgUrl);
+    },
     edit() {
       this.isWantEdit = true;
     },
@@ -161,11 +201,17 @@ export default {
       this.isWantEdit = false;
     },
     getNoteList() {
+      console.log(this.$cookies.get("userId"));
+      if (this.$store.state.userId != null) {
+        this.userId = this.$store.state.userId;
+      } else if (this.$cookies.get("userId")) {
+        this.userId = this.$cookies.get("userId");
+      }
       //   console.log(this.$store.state.userId);
       this.$http
         .get("notes/noteList", {
           params: {
-            userId: this.$cookies.get("userId"),
+            userId: this.userId,
           },
         })
         .then(({ data }) => {
@@ -192,6 +238,7 @@ export default {
       return true;
     },
     concern() {
+      this.isEidtAva = false;
       // var userId = this.$store.state.userId;
       // this.$refs.upload.submit();
       // console.log(this.fileList);
@@ -214,11 +261,14 @@ export default {
           if (res.data.code === 0) {
             this.$message({ message: "头像上传成功" });
             this.headerShow = false;
+            // let newImg=''
+            // url = null;
             if (this.$store.state.userImg == null) {
               this.headerImgUrl =
                 "http://1.15.53.152:9999/img/photo/" + this.userId + ".jpg";
             }
-            this.headerImgUrl.replace("t=", "");
+            this.headerImgUrl.replace("?t=", "");
+            // newImg.replace("t=")
             this.headerImgUrl += "?t=" + Math.random();
             console.log(this.headerImgUrl);
             this.$store.commit("updateUserImg", this.headerImgUrl);

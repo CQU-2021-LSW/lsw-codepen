@@ -16,16 +16,26 @@
           <div class="line">
             <el-tag>密码:</el-tag>
             <div class="inputdiv">
-              <el-input type="password" v-model="ruleForm.password" autocomplete="off"></el-input>
+              <el-input
+                type="password"
+                v-model="ruleForm.password"
+                autocomplete="off"
+              ></el-input>
             </div>
           </div>
         </el-form-item>
         <el-form-item>
           <div class="btndiv">
-            <el-button @click="login('ruleForm')" type="primary">登录</el-button>
-            <el-button @click="resetForm('ruleForm')" type="info">重置</el-button>
+            <el-button @click="login('ruleForm')" type="primary"
+              >登录</el-button
+            >
+            <el-button @click="resetForm('ruleForm')" type="info"
+              >重置</el-button
+            >
             <el-button @click="toRegister()" type="success">注册</el-button>
-            <el-button @click="toFindbackPassword()" type="danger">找回密码</el-button>
+            <el-button @click="toFindbackPassword()" type="danger"
+              >找回密码</el-button
+            >
           </div>
         </el-form-item>
       </el-form>
@@ -34,24 +44,24 @@
 </template>
 
 <script>
-import candle from './candle.vue';
+import candle from "./candle.vue";
 export default {
   components: { candle },
   data() {
     var checkName = (rule, value, callback) => {
       if (value === "") {
         setTimeout(() => {
-          callback(new Error("请输入用户名、(*￣3￣)╭"))
-        }, 500)
+          callback(new Error("请输入用户名、(*￣3￣)╭"));
+        }, 500);
       } else {
-        callback()
+        callback();
       }
     };
     var validatePass = (rule, value, callback) => {
       if (value === "") {
-        callback(new Error("请输入密码"))
+        callback(new Error("请输入密码"));
       } else {
-        callback()
+        callback();
       }
     };
     return {
@@ -79,48 +89,49 @@ export default {
           })
             .then(({ data }) => {
               // 保存Token和登录信息
-              console.log(data)
-              console.log(data.data)
+              console.log(data);
+              console.log(data.data);
               if (data.code === 0) {
-                console.log("认证成功")
+                console.log("认证成功");
                 // console.log(this.ruleForm.userName)
                 var args = {
                   data: data.data,
                   token: data.token,
                   // name: this.ruleForm.userName
-                }
-                this.$store.commit("auth", args)
-                this.$cookies.set("userId", data.data.userId)
-                this.$message({ message: '登陆成功' })
+                };
+                this.$store.commit("auth", args);
+                this.$cookies.set("userId", data.data.userId);
+                console.log(this.$cookies.get("userId"));
+                this.$message({ message: "登陆成功" });
                 //this.$cookies.set("userName", this.ruleForm.userName)
-                if (this.$store.state.isCache){
-                  this.$router.push({ path: "/editor" })
+                if (this.$store.state.isCache) {
+                  this.$router.push({ path: "/editor" });
                 } else {
-                  this.$router.push({ path: "/user-hub" })
+                  this.$router.push({ path: "/user-hub" });
                 }
               } else {
-                console.log("失败")
-                this.$message({ message: '用户名或密码错误' })
+                console.log("失败");
+                this.$message({ message: "用户名或密码错误" });
               }
             })
             .catch(({ error }) => {
-              console.log("err")
-              console.log(error)
+              console.log("err");
+              console.log(error);
             });
         } else {
-          console.log("error submit!!")
+          console.log("error submit!!");
           return false;
         }
       });
     },
     resetForm(formName) {
-      this.$refs[formName].resetFields()
+      this.$refs[formName].resetFields();
     },
     toRegister() {
-      this.$router.push({ path: "/register" })
+      this.$router.push({ path: "/register" });
     },
     toFindbackPassword() {
-      this.$router.push({ path: "/findBackPwd" })
+      this.$router.push({ path: "/findBackPwd" });
     },
   },
 };
@@ -149,16 +160,16 @@ export default {
 .el-form-item__label {
   font-size: 24px;
 }
-.line{
+.line {
   display: flex;
   flex-direction: row;
   margin: 10px 0px 0px 0px;
 }
-.inputdiv{
+.inputdiv {
   height: 40px;
   width: 250px;
 }
-.el-tag{
+.el-tag {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -167,7 +178,7 @@ export default {
   font-size: 14px;
   margin: 0px 20px 0px 0px;
 }
-.btndiv{
+.btndiv {
   display: flex;
   flex-direction: row;
   justify-content: space-around;
